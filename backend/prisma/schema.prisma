@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CategoryStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductVariantStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+model Category {
+  id              String          @id @default(cuid())
+  name            String          @db.VarChar(120)
+  slug            String          @unique @db.VarChar(140)
+  description     String?         @db.Text
+  primaryImageUrl String?         @db.Text
+  status          CategoryStatus  @default(ACTIVE)
+  sortOrder       Int             @default(0)
+  parentId        String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  parent          Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  children        Category[]      @relation("CategoryHierarchy")
+  products        Product[]
+
+  @@index([parentId])
+  @@index([status])
+  @@index([sortOrder])
+  @@map("categories")
+}
+
+model Product {
+  id                String         @id @default(cuid())
+  name              String         @db.VarChar(160)
+  slug              String         @unique @db.VarChar(180)
+  shortDescription  String?        @db.VarChar(280)
+  description       String?        @db.Text
+  status            ProductStatus  @default(DRAFT)
+  basePrice         Decimal        @db.Decimal(10, 2)
+  compareAtPrice    Decimal?       @db.Decimal(10, 2)
+  sku               String?        @unique @db.VarChar(64)
+  stockQuantity     Int?
+  isFeatured        Boolean        @default(false)
+  sortOrder         Int            @default(0)
+  categoryId        String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  category          Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  images            ProductImage[]
+  variants          ProductVariant[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([isFeatured])
+  @@index([sortOrder])
+  @@map("products")
+}
+
+model ProductImage {
+  id         String   @id @default(cuid())
+  imageUrl   String   @db.Text
+  altText    String?  @db.VarChar(180)
+  isPrimary  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  productId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([productId])
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}
+
+model ProductVariant {
+  id            String               @id @default(cuid())
+  title         String               @db.VarChar(160)
+  sku           String?              @unique @db.VarChar(64)
+  size          String?              @db.VarChar(64)
+  color         String?              @db.VarChar(64)
+  material      String?              @db.VarChar(64)
+  status        ProductVariantStatus @default(ACTIVE)
+  priceOverride Decimal?             @db.Decimal(10, 2)
+  stockQuantity Int?
+  sortOrder     Int                  @default(0)
+  productId     String
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  product       Product              @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([productId])
+  @@index([status])
+  @@index([productId, sortOrder])
+  @@map("product_variants")
+}

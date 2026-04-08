@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e3e2e0",
+              "inverse-on-surface": "#f2f1ee",
+              "on-secondary-fixed": "#002112",
+              "on-secondary-container": "#4b6b58",
+              "on-tertiary-fixed-variant": "#574500",
+              "surface-container": "#efeeeb",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#dbdad7",
+              "secondary": "#456552",
+              "inverse-surface": "#2f312f",
+              "surface-tint": "#af2b3e",
+              "on-secondary-fixed-variant": "#2d4d3c",
+              "tertiary-fixed-dim": "#e9c349",
+              "on-tertiary-container": "#4f3d00",
+              "on-tertiary-fixed": "#241a00",
+              "primary-container": "#800020",
+              "surface-variant": "#e3e2e0",
+              "on-surface": "#1a1c1a",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#faf9f6",
+              "surface-container-low": "#f4f3f1",
+              "tertiary-container": "#cca730",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#584141",
+              "surface-bright": "#faf9f6",
+              "primary-fixed": "#ffdada",
+              "error": "#ba1a1a",
+              "error-container": "#ffdad6",
+              "on-error-container": "#93000a",
+              "outline-variant": "#e0bfbf",
+              "surface-container-high": "#e9e8e5",
+              "primary-fixed-dim": "#ffb3b5",
+              "tertiary-fixed": "#ffe088",
+              "secondary-container": "#c6ebd3",
+              "on-tertiary": "#ffffff",
+              "primary": "#570013",
+              "secondary-fixed": "#c6ebd3",
+              "on-error": "#ffffff",
+              "inverse-primary": "#ffb3b5",
+              "outline": "#8c7071",
+              "tertiary": "#735c00",
+              "on-primary-fixed": "#40000b",
+              "on-primary-fixed-variant": "#8e0f28",
+              "on-background": "#1a1c1a",
+              "on-primary-container": "#ff828a",
+              "background": "#faf9f6",
+              "secondary-fixed-dim": "#abcfb8"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .font-serif { font-family: 'Noto Serif', serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Header -->
+<header class="bg-[#faf9f6] dark:bg-stone-900 shadow-sm shadow-[#1a1c1a]/5 docked full-width top-0 z-50 sticky">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-12">
+<a class="text-2xl font-serif italic text-[#570013] dark:text-[#e0bfbf]" href="/">Gilded Heirloom</a>
+<nav class="hidden md:flex gap-8 font-['Noto_Serif'] text-sm tracking-wide">
+<a class="text-[#570013] dark:text-[#ffffff] border-b-2 border-[#570013] pb-1 hover:opacity-80 transition-opacity duration-300" href="/shop">Shop</a>
+<a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-opacity duration-300" href="/wholesale">Wholesale</a>
+<a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-opacity duration-300" href="/blog">Blog</a>
+<a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-opacity duration-300" href="/contact">Contact</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-surface-container-low px-4 py-2 rounded-full border-none">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs w-48 font-body" placeholder="Search our collection..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#570013] dark:text-[#e0bfbf]">
+<button class="hover:opacity-80 transition-opacity"><span class="material-symbols-outlined" data-icon="person">person</span></button>
+<button class="hover:opacity-80 transition-opacity"><span class="material-symbols-outlined" data-icon="favorite">favorite</span></button>
+<button class="hover:opacity-80 transition-opacity relative">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 py-12">
+<!-- Breadcrumbs -->
+<nav class="mb-10 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="/">Home</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary font-semibold">Shop</span>
+</nav>
+<div class="flex flex-col lg:flex-row gap-16">
+<!-- Sidebar Filters -->
+<aside class="w-full lg:w-64 flex-shrink-0">
+<div class="sticky top-28 space-y-10">
+<div>
+<h3 class="font-headline text-lg text-primary mb-6">Categories</h3>
+<div class="space-y-4">
+<details class="group" open="">
+<summary class="flex items-center justify-between list-none cursor-pointer text-sm font-medium hover:text-primary">
+<span>Threads &amp; Zari</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<ul class="mt-3 ml-2 space-y-2 text-sm text-on-surface-variant">
+<li class="hover:text-primary cursor-pointer">Gold Dabka</li>
+<li class="hover:text-primary cursor-pointer">Silver Nakshi</li>
+<li class="hover:text-primary cursor-pointer">Copper Gijai</li>
+</ul>
+</details>
+<details class="group">
+<summary class="flex items-center justify-between list-none cursor-pointer text-sm font-medium hover:text-primary">
+<span>Embellishments</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<ul class="mt-3 ml-2 space-y-2 text-sm text-on-surface-variant">
+<li class="hover:text-primary cursor-pointer">Sequins</li>
+<li class="hover:text-primary cursor-pointer">Beads &amp; Pearls</li>
+<li class="hover:text-primary cursor-pointer">Glass Stones</li>
+</ul>
+</details>
+</div>
+</div>
+<div class="h-px bg-outline-variant/20"></div>
+<div>
+<h3 class="font-headline text-sm font-bold text-on-surface mb-6">Refine By</h3>
+<!-- Grade Filter -->
+<div class="mb-8">
+<p class="text-xs font-bold uppercase tracking-tighter mb-4 text-on-surface-variant">Grade</p>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded-sm border-outline text-primary focus:ring-primary h-4 w-4" type="checkbox"/>
+<span class="text-sm group-hover:text-primary">Grade A (Premium)</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded-sm border-outline text-primary focus:ring-primary h-4 w-4" type="checkbox"/>
+<span class="text-sm group-hover:text-primary">Grade B (Standard)</span>
+</label>
+</div>
+</div>
+<!-- Material Filter -->
+<div class="mb-8">
+<p class="text-xs font-bold uppercase tracking-tighter mb-4 text-on-surface-variant">Material</p>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 text-xs border border-outline-variant hover:border-primary transition-colors">Silk</button>
+<button class="px-3 py-1 text-xs border border-outline-variant hover:border-primary transition-colors">Metallic</button>
+<button class="px-3 py-1 text-xs border border-outline-variant hover:border-primary transition-colors">Cotton</button>
+<button class="px-3 py-1 text-xs border border-outline-variant hover:border-primary transition-colors">Polyester</button>
+</div>
+</div>
+<!-- Price Range -->
+<div class="mb-8">
+<p class="text-xs font-bold uppercase tracking-tighter mb-4 text-on-surface-variant">Price Range</p>
+<input class="w-full accent-primary h-1 bg-surface-container-high rounded-full appearance-none cursor-pointer" type="range"/>
+<div class="flex justify-between mt-2 text-xs text-on-surface-variant">
+<span>$10</span>
+<span>$500+</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Product Grid Section -->
+<section class="flex-1">
+<!-- Toolbar -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-6">
+<div>
+<h1 class="font-headline text-4xl text-primary mb-2">Our Collection</h1>
+<p class="text-on-surface-variant font-body text-sm italic">Discover 124 curated handcrafted treasures</p>
+</div>
+<div class="flex items-center gap-4">
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Sort By:</label>
+<select class="bg-transparent border-none border-b border-outline-variant text-sm py-1 pr-8 focus:ring-0 focus:border-primary cursor-pointer font-medium">
+<option>Bestselling</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Newest Arrival</option>
+</select>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-16">
+<!-- Product 1 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Intricate gold zari embroidery thread on spool" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs"/>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Signature Gold</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Antique French Zari Thread</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$124.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">Pack of 3</span>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Detailed silver dabka embroidery materials" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi2c_TyM9f6kBfbZJGnTEjwli3z8n636cclHkGbGfynEYaSe8ayaP9SvuBom0ji5a4_7N42W8vKr0Tnk1attuLy4Vz2T9bYc6i-8BVU5Dl_RC0jpR4n2cVa_abfABbZKLdCdRwshKB-Voh9mduLTrfZklmQGhDoZfbciBZ0q4DOmSXj21WTGNFjlYIMHagSZpv_l8ddBJ3omFgC5P3qUJlTDVdp4fUgeZSCMZ5uN7aaPQCKyWMTk_oT--YRpDT01AHO3HQkHj22NE"/>
+<span class="absolute top-4 right-4 bg-tertiary text-on-tertiary text-[9px] font-bold px-3 py-1 uppercase tracking-widest">New Arrival</span>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Luxe Silver</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Premium Sterling Dabka Coil</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$89.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">Grade A</span>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="High quality iridescent sequins and beads" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu19GJp5XWRhmlllvvbGIfU_aedK-wSgJmuTocBZoPY3bLNIYUZGSZosVr_1qHQr-lDEVci-RmGJpH_O4-BasSjyh-FjGY-WK9mK_UpgAYWRlsymEnvk5yI6ssREPdzLLZhpdG8cza0D2r057EtfapmBdFGhhqBGejNBYjEtq7tmZ7iXnmiUUsvj1vGpwuIVemjmqzoCRZgRCI6r-UdqwTZUXFY8-be-FGt1ezuwGwzAoom16wMISwFySrTU8V_dtSr4QBGeR0r5Q"/>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Artisan Picks</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Iridescent Glass Sequins</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$45.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">50g Pack</span>
+</div>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Intricate embroidery pattern with copper threads" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuU452P7gLY5qjhkgEE_o5RA1pwCdgdtGs3tSIxEl0-rwDHjkD_kosHnCYzueGUFUsZScLT42COMjw1EhIwOAEVEizrDuH0kBvM9sfgEquwL9Oe6N3ag6EmgCAmkev23aRUHS1Ij8_gI9hrG8RXRV5eFC0UrurLl5qvoU1n8kNcbLk5MvrVCxVoA1gWnzDbpV2dzA4Q-GeQOuDr5GgMLu1-A3lXyzl1PrDMaMkHbSCCyMeKItVOcjdDvM_Rw0RFHPGYtIqyldrYXc"/>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Metallic Earth</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Burnt Copper Gijai Wire</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$68.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">Professional Grade</span>
+</div>
+</div>
+</div>
+<!-- Product 5 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Traditional needlework materials background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVJjCXm1nDyWGXNAyt-rkZyoT5BTlIaLvEVI7vokxWVSdYa5BNGwUq9NX-mtrwDSUdly4pnrYB6DhuLnU9ecZiTfuVAYZ8TJ9K63GlvR3ApKPcuD8qvQ6vLVGPh0_9J8YqT7QxZCI15sOaCD5w-2kv9KpSRvZozIxkYRk2vU9JGi9esh9DfLYpFLqP87w8-RiZbIssp474vut5nt5P3wg6Hc0ZYJuWln1QlHUBzbSCCm4XlA9wsHGrmlDXOcbYWuj8PqufFAseGiw"/>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Old World</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Hand-Polished Bead Assortment</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$112.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">Limited Batch</span>
+</div>
+</div>
+</div>
+<!-- Product 6 -->
+<div class="group relative bg-surface-container-lowest p-4">
+<div class="relative overflow-hidden aspect-[4/5] mb-6">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-700" data-alt="Gold and silver embroidery thread detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk_kQV_ZRJq3n2Tc2V61fSouK_XBdWbUtmk3DYLVbGUP9CSIAHesDJ5C2UqKQUSYCopL7m7Qq0dnzg_Rwltz6a9-KUm5T2pEcFE3zhkuSQ5RvhsfIqEnQmbfJ5uYQkmTX9IlWxxrssB1llP0O2iQVfMIEdqgj8FGG0o6VGpgjuWeqq3n_sBchLk5bqKSVKEqvluKHWAlEUoIYG0vwot1OCQ62n9_TX70d3Xpa_MUyOqBTZkAaWDI0Ebnt4i5hb-_hRbhSFQ4P-Ehw"/>
+<button class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500">Quick Shop</button>
+</div>
+<div class="space-y-2 px-1">
+<p class="text-[10px] text-tertiary font-bold tracking-[0.2em] uppercase">Royalty Collection</p>
+<h3 class="font-headline text-lg text-on-surface leading-snug">Champagne Gold Bullion</h3>
+<div class="flex justify-between items-center pt-2">
+<p class="font-body text-base text-on-surface">$156.00</p>
+<span class="text-[10px] font-medium text-on-surface-variant/60">Pack of 5</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-24 flex items-center justify-center gap-8">
+<button class="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-sm">west</span>
+                        Prev
+                    </button>
+<div class="flex items-center gap-4">
+<span class="w-10 h-10 flex items-center justify-center bg-primary text-on-primary text-sm font-bold">01</span>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-low text-sm transition-colors">02</button>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-low text-sm transition-colors">03</button>
+<span class="text-on-surface-variant/40">...</span>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-low text-sm transition-colors">12</button>
+</div>
+<button class="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">
+                        Next
+                        <span class="material-symbols-outlined text-sm">east</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#f4f3f1] dark:bg-stone-950 border-t border-[#e0bfbf]/20 w-full pt-16 pb-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-8 max-w-screen-2xl mx-auto">
+<div class="space-y-6">
+<a class="text-xl font-serif text-[#570013] dark:text-[#e0bfbf]" href="/">Gilded Heirloom</a>
+<p class="text-[#584141] dark:text-stone-400 text-sm font-body leading-relaxed max-w-xs">
+                    Curating the world's finest traditional embroidery materials for modern artisans. Each thread tells a story of century-old heritage.
+                </p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined p-2 bg-surface rounded-full text-primary text-sm cursor-pointer hover:bg-primary hover:text-on-primary transition-all">public</span>
+<span class="material-symbols-outlined p-2 bg-surface rounded-full text-primary text-sm cursor-pointer hover:bg-primary hover:text-on-primary transition-all">mail</span>
+<span class="material-symbols-outlined p-2 bg-surface rounded-full text-primary text-sm cursor-pointer hover:bg-primary hover:text-on-primary transition-all">share</span>
+</div>
+</div>
+<div>
+<h4 class="font-headline text-sm font-bold text-primary mb-6">Explore</h4>
+<ul class="space-y-4 font-['Manrope'] text-sm">
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/about">About Our Atelier</a></li>
+<li><a class="text-[#570013] font-semibold" href="/shop">Shop Collection</a></li>
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/wholesale">Wholesale Inquiries</a></li>
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/blog">The Heritage Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline text-sm font-bold text-primary mb-6">Customer Care</h4>
+<ul class="space-y-4 font-['Manrope'] text-sm">
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/shipping">Shipping &amp; Logistics</a></li>
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/returns">Returns &amp; Exchanges</a></li>
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/faq">Frequenty Asked Questions</a></li>
+<li><a class="text-[#584141] dark:text-stone-400 hover:text-[#570013] transition-colors" href="/contact">Contact Support</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline text-sm font-bold text-primary mb-6">Join the Atelier</h4>
+<p class="text-[#584141] dark:text-stone-400 text-sm mb-4">Subscribe for exclusive access to new releases and artisan techniques.</p>
+<div class="relative">
+<input class="w-full bg-surface border-none border-b border-outline-variant py-3 focus:ring-0 text-sm font-body" placeholder="Your email address" type="email"/>
+<button class="absolute right-0 bottom-3 text-primary font-bold text-xs uppercase tracking-widest hover:opacity-70 transition-opacity">Join</button>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-8 mt-20 pt-8 border-t border-[#e0bfbf]/10 flex flex-col md:flex-row justify-between gap-4">
+<p class="text-[#584141] dark:text-stone-400 text-xs font-['Manrope']">© 2024 Gilded Heirloom. Handcrafted Excellence.</p>
+<div class="flex gap-6 text-xs text-[#584141] dark:text-stone-400 font-['Manrope']">
+<a class="hover:text-[#570013]" href="/privacy">Privacy Policy</a>
+<a class="hover:text-[#570013]" href="/terms">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

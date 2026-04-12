@@ -1,0 +1,7 @@
+- `[x]` Fix S-1 Security Issue
+  - `[x]` Harden backend/.gitignore to ignore .env* variants
+  - `[x]` Update backend/.env.example with correct database and mock credentials
+  - `[x]` Delete backend/server.err.log
+  - `[x]` Delete backend/server.out.log
+  - `[x]` Delete backend/out.txt
+  - `[x]` Remind user to manually rotate PostgreSQL password

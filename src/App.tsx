@@ -41,20 +41,19 @@ export default function App() {
             <Route path="shop" element={<Shop />} />
             <Route path="product/:slug" element={<ProductDetail />} />
             <Route path="cart" element={<Cart />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="faq" element={<FaqPage />} />
+            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="terms-of-service" element={<TermsOfServicePage />} />
+            <Route path="shipping-returns" element={<ShippingReturnsPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 
-          {/* Secure Checkout explicitly outside of MainLayout to drop standard Navigation */}
+          {/* Distraction-free layouts: no standard Header/Footer */}
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/admin/login" element={<AdminAuth />} />
-          <Route path="/faq" element={<FaqPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-          <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
-          {/* Contact page has its own Navbar/Footer per Stitch design */}
-          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Footer } from '../../components/Footer/Footer';
+import { useCart } from '../../context/CartContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function Checkout() {
+  useDocumentTitle('Checkout');
+  const { items } = useCart();
+  const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const [shippingFee, setShippingFee] = useState<number>(80);
+  const total = subtotal + shippingFee;
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-primary/10 min-h-screen flex flex-col">
       {/* TopAppBar: Center-aligned, Distraction-free */}
@@ -108,7 +116,7 @@ export default function Checkout() {
                   <div className="space-y-4">
                     <label className="flex items-center justify-between p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-md cursor-pointer hover:border-primary transition-all group">
                       <div className="flex items-center gap-4">
-                        <input defaultChecked className="text-primary focus:ring-primary w-4 h-4" name="shipping" type="radio"/>
+                        <input checked={shippingFee === 80} onChange={() => setShippingFee(80)} className="text-primary focus:ring-primary w-4 h-4" name="shipping" type="radio"/>
                         <div>
                           <p className="font-body text-sm font-semibold text-on-surface">Standard Delivery</p>
                           <p className="text-xs text-on-surface-variant">3-5 business days</p>
@@ -118,7 +126,7 @@ export default function Checkout() {
                     </label>
                     <label className="flex items-center justify-between p-4 bg-surface-container-lowest border border-outline-variant/20 rounded-md cursor-pointer hover:border-primary transition-all group">
                       <div className="flex items-center gap-4">
-                        <input className="text-primary focus:ring-primary w-4 h-4" name="shipping" type="radio"/>
+                        <input checked={shippingFee === 250} onChange={() => setShippingFee(250)} className="text-primary focus:ring-primary w-4 h-4" name="shipping" type="radio"/>
                         <div>
                           <p className="font-body text-sm font-semibold text-on-surface">Express Courier</p>
                           <p className="text-xs text-on-surface-variant">1-2 business days</p>
@@ -145,46 +153,39 @@ export default function Checkout() {
               <h3 className="font-headline text-xl text-primary mb-8 border-b border-outline-variant/30 pb-4">Order Summary</h3>
               {/* Items */}
               <div className="space-y-6 mb-8">
-                <div className="flex gap-4">
-                  <div className="w-20 h-24 bg-surface-container-lowest overflow-hidden shrink-0">
-                    <img alt="Heirloom Scarf" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRE-1jYM51oMnDiFiLC8zXFu_B6nrqSOV2N1-H_KdXLC50NVuZK6gbjsOyehYJprD9t1VWpahHAH9YonJfDQWGrF8hVfW94er8zKNmh4VwqD2nAnGf_GsUiYopRj4Yq_Y9by_nwnvj8ekburu_bhTqoUTQ8eKJbk3AfCpSxJLAegl5rylGO-W-cEPUoAUBE69HXun5For1zn3QxCUxHKfzUhqMafbJuYoNYv370jSLZGKNQsJ_EpIARkL6k07MKOA7fyAxRPn_e0w"/>
-                  </div>
-                  <div className="flex flex-col justify-between py-1">
-                    <div>
-                      <h4 className="font-headline text-sm font-bold text-on-surface">Gilded Zari Shawl</h4>
-                      <p className="font-body text-xs text-on-surface-variant">Deep Maroon / Silk Blend</p>
+                {items.map((item) => (
+                  <div key={item.id} className="flex gap-4">
+                    <div className="w-20 h-24 bg-surface-container-lowest overflow-hidden shrink-0">
+                      <img alt={item.name} className="w-full h-full object-cover" src={item.image || "https://placehold.co/80x96"}/>
                     </div>
-                    <p className="font-body text-sm font-bold text-primary">₹12,500</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4">
-                  <div className="w-20 h-24 bg-surface-container-lowest overflow-hidden shrink-0">
-                    <img alt="Silk Thread Spools" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7NC5Yeh0c4omXoFG8QsZaKlm_Ma7KsQOV0iqhsegoHe2vqDA3YY7OEwNNutGT18mNgfrNLh9Id-t7kc2xo_LSr8TiAY1AF2mJ9fRzA8d3mmihFHVoH4M9RszoHkB1m-nXqCmzW9dEUqx8WrZHuVhv51JyttMgV_B-u4xrfxc6u2tr-FqSUwouZ4-iWgYDqX2QAh84MuMO7BSZsx-BiK8LqUsdJoEwXvO1rGIorxUNjT5ThSPr5r94xzMoQ08b-37okN0Rc9oAUHA"/>
-                  </div>
-                  <div className="flex flex-col justify-between py-1">
-                    <div>
-                      <h4 className="font-headline text-sm font-bold text-on-surface">Gold Thread Embroidery Kit</h4>
-                      <p className="font-body text-xs text-on-surface-variant">24k Finish / Professional</p>
+                    <div className="flex flex-col justify-between py-1">
+                      <div>
+                        <h4 className="font-headline text-sm font-bold text-on-surface">{item.name}</h4>
+                        <p className="font-body text-xs text-on-surface-variant">{item.variant}</p>
+                        {item.quantity > 1 && <p className="font-body text-xs text-on-surface-variant mt-1">Qty: {item.quantity}</p>}
+                      </div>
+                      <p className="font-body text-sm font-bold text-primary">₹{(item.price * item.quantity).toLocaleString()}</p>
                     </div>
-                    <p className="font-body text-sm font-bold text-primary">₹3,200</p>
                   </div>
-                </div>
+                ))}
+                {items.length === 0 && (
+                  <p className="text-sm text-on-surface-variant italic">Your cart is empty.</p>
+                )}
               </div>
 
               {/* Totals */}
               <div className="space-y-3 pt-6 border-t border-outline-variant/30">
                 <div className="flex justify-between font-body text-sm">
                   <span className="text-on-surface-variant">Subtotal</span>
-                  <span className="text-on-surface">₹15,700</span>
+                  <span className="text-on-surface">₹{subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between font-body text-sm">
                   <span className="text-on-surface-variant">Shipping</span>
-                  <span className="text-on-surface">₹80</span>
+                  <span className="text-on-surface">{shippingFee === 0 ? 'Complimentary' : `₹${shippingFee}`}</span>
                 </div>
                 <div className="flex justify-between font-body text-lg font-bold pt-4 text-on-surface">
                   <span>Total</span>
-                  <span className="text-primary">₹15,780</span>
+                  <span className="text-primary">₹{total.toLocaleString()}</span>
                 </div>
               </div>
 

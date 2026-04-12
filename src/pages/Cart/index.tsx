@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function Cart() {
+  useDocumentTitle('Your Cart');
   const { items, removeFromCart, updateQuantity } = useCart();
   
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);

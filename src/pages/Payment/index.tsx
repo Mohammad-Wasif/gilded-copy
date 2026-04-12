@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Footer } from '../../components/Footer/Footer';
+import { useCart } from '../../context/CartContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function Payment() {
+  useDocumentTitle('Payment');
+  const { items } = useCart();
+  const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const shippingFee = subtotal >= 10000 ? 0 : 80;
+  const gst = Math.round(subtotal * 0.12);
+  const total = subtotal + shippingFee + gst;
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-primary/10 min-h-screen flex flex-col">
       {/* TopAppBar: Center-aligned, Distraction-free */}
@@ -159,50 +167,45 @@ export default function Payment() {
             <h3 className="font-headline text-xl text-primary border-b border-outline-variant/20 pb-4">Order Summary</h3>
             {/* Items */}
             <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="w-20 h-24 bg-surface-container-highest rounded-sm overflow-hidden shrink-0">
-                  <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2qDfRQwyuenfuMPfrbZOQPGr5sgXN2RFo07AEehIzDHIQxqXS4UkI1M6GNIsxOxUV5JMsAlTjQCQv7ey_RrSeI77X6iwdhSzfoEByQdHvST9Qak7ofEN1TeGHkKOwI0aIJsZgOzDMgx09v74p1gwanW1ljm7RW66EsbYGaDe5fGfuDUWWVdk3nd70TpLeNJnkCY4D3o1PzWpG43UPtCr0xzsH859Kh2CBdj6fMoexRzGlrqFtjGqZfk4Ruh4Rb-CCiN3QkZyUOz8"/>
-                </div>
-                <div className="flex flex-col justify-between py-1">
-                  <div>
-                    <h4 className="font-headline text-sm text-on-surface">The Empress Stole</h4>
-                    <p className="text-xs text-on-surface-variant">Hand-woven Zari, Deep Crimson</p>
+              {items.map(item => (
+                <div key={item.id} className="flex gap-4">
+                  <div className="w-20 h-24 bg-surface-container-highest rounded-sm overflow-hidden shrink-0">
+                    <img className="w-full h-full object-cover" src={item.image || "https://placehold.co/80x96"} alt={item.name} />
                   </div>
-                  <span className="font-body text-sm font-semibold">₹ 42,500</span>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="w-20 h-24 bg-surface-container-highest rounded-sm overflow-hidden shrink-0">
-                  <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRTmOAiCmm9dkCMOhy3f0SHImCY0BTHIprfpzKGFXY7IiHC190Lzn-hT1eId-Sw7j-VTTo7rqZeGxxHLWS7wWcU-hmHdN3khYVRg5KQnerkNaj8lvi9mf55stLi5r3nFRVB8C_63E8zDacFYZ325GL3kJ9S3PcwIkcP2FipWYiSNXCvc5kGBrGLuc0eWiggnoC_fJzHeYRAg6rWs0Y2TVIf7nuQ2_BopkFVLBwzx0hk9wLX2rR66N6VwFSQ_Xi80k1VNrCf84X49g"/>
-                </div>
-                <div className="flex flex-col justify-between py-1">
-                  <div>
-                    <h4 className="font-headline text-sm text-on-surface">Royal Gilded Pouch</h4>
-                    <p className="text-xs text-on-surface-variant">Pearl &amp; Gold Beadwork</p>
+                  <div className="flex flex-col justify-between py-1">
+                    <div>
+                      <h4 className="font-headline text-sm text-on-surface">{item.name}</h4>
+                      <p className="text-xs text-on-surface-variant">{item.variant}</p>
+                      {item.quantity > 1 && <p className="text-xs text-on-surface-variant mt-1">Qty: {item.quantity}</p>}
+                    </div>
+                    <span className="font-body text-sm font-semibold">₹ {(item.price * item.quantity).toLocaleString()}</span>
                   </div>
-                  <span className="font-body text-sm font-semibold">₹ 18,200</span>
                 </div>
-              </div>
+              ))}
+              {items.length === 0 && (
+                <p className="text-sm text-on-surface-variant italic">Your cart is empty.</p>
+              )}
             </div>
 
             {/* Price Breakdown */}
             <div className="pt-6 border-t border-outline-variant/20 space-y-3">
               <div className="flex justify-between text-sm text-on-surface-variant">
                 <span>Subtotal</span>
-                <span>₹ 60,700</span>
+                <span>₹ {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm text-on-surface-variant">
                 <span>Artisan Shipping</span>
-                <span className="text-secondary font-medium uppercase text-xs tracking-wider">Complimentary</span>
+                <span className={shippingFee === 0 ? "text-secondary font-medium uppercase text-xs tracking-wider" : ""}>
+                  {shippingFee === 0 ? "Complimentary" : `₹ ${shippingFee}`}
+                </span>
               </div>
               <div className="flex justify-between text-sm text-on-surface-variant">
-                <span>GST (Estimated)</span>
-                <span>₹ 7,284</span>
+                <span>GST (Estimated 12%)</span>
+                <span>₹ {gst.toLocaleString()}</span>
               </div>
               <div className="flex justify-between pt-4 text-lg font-headline text-primary border-t border-outline-variant/10">
                 <span>Total Due</span>
-                <span>₹ 67,984</span>
+                <span>₹ {total.toLocaleString()}</span>
               </div>
             </div>
 

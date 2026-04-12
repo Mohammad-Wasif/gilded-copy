@@ -3,8 +3,12 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { api } from '../../lib/api';
 import { Category, Product } from '../../lib/types';
+import { ShopGridSkeleton } from '../../components/Skeletons';
+import { ErrorFallback } from '../../components/ErrorFallback';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function Shop() {
+  useDocumentTitle('Shop');
   const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -16,6 +20,7 @@ export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [sortBy, setSortBy] = useState('Bestselling');
   const [priceRange, setPriceRange] = useState(50000);
@@ -24,7 +29,7 @@ export default function Shop() {
   useEffect(() => {
     api.catalog.getCategoryTree().then(res => {
       if (res.success) setCategories(res.data);
-    }).catch(console.error);
+    }).catch(() => {});
   }, []);
 
   // Fetch Products based on URL params
@@ -53,7 +58,8 @@ export default function Shop() {
            setTotalPages(1);
         }
       }
-    }).catch(console.error).finally(() => setLoading(false));
+      setError(null);
+    }).catch(() => setError('Failed to load products. Please try again.')).finally(() => setLoading(false));
 
   }, [query, categorySlug, page, sortBy]);
 
@@ -188,11 +194,15 @@ export default function Shop() {
             </div>
           </div>
 
-          {loading ? (
-             <div className="flex items-center justify-center p-24 text-on-surface-variant">
-               <span className="material-symbols-outlined animate-spin mr-3">refresh</span>
-               Loading products...
-             </div>
+          {error ? (
+             <ErrorFallback title="Couldn't load products" message={error} onRetry={() => {
+               setError(null);
+               setLoading(true);
+               const sortParam = sortBy === 'Price: Low to High' ? 'price_asc' : sortBy === 'Price: High to Low' ? 'price_desc' : sortBy === 'Newest Arrival' ? 'newest' : '';
+               api.catalog.getProducts({ page, limit: 12, sort: sortParam }).then(res => { if (res.success) { setProducts(res.data); setError(null); }}).catch(() => setError('Still failing. Check your connection.')).finally(() => setLoading(false));
+             }} />
+          ) : loading ? (
+             <ShopGridSkeleton />
           ) : filteredProducts.length === 0 ? (
              <div className="text-center p-24 bg-surface-container-low rounded-md">
                <span className="material-symbols-outlined text-4xl mb-4 opacity-50">search_off</span>
@@ -224,15 +234,13 @@ export default function Shop() {
                           e.preventDefault();
                           const cartItemObj = {
                             id: prod.id + '-' + (prod.variants?.[0]?.id || 'novariant'),
-                            productId: prod.id,
-                            variantId: prod.variants?.[0]?.id || 'novariant',
                             name: prod.name,
                             price: price,
                             quantity: 1,
-                            imageUrl: primaryImage,
-                            variantTitle: prod.variants?.[0]?.title
+                            image: primaryImage,
+                            variant: prod.variants?.[0]?.title || 'Standard'
                           };
-                          addToCart(cartItemObj as any);
+                          addToCart(cartItemObj);
                         }}
                         className="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md text-primary py-3 text-xs font-bold uppercase tracking-widest translate-y-12 group-hover:translate-y-0 transition-transform duration-500 hover:bg-primary hover:text-white transition-colors"
                       >

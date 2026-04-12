@@ -10,33 +10,7 @@ export interface CartItem {
   image: string;
 }
 
-const defaultItems: CartItem[] = [
-  {
-    id: 'gold-zari',
-    name: 'Pure 24K Gold Zari',
-    variant: 'Fine Grade - 500m Spool',
-    price: 2400,
-    originalPrice: 2800,
-    quantity: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCtCdFxfj8TzWujgsg5esPu4wz2z1OLSKdkla-h__h1gWYJQ-tPzFGcdfUqO7gAcx5M5ViGSBAUhDAoFbKTFzd8dYmi-AiLu1lLgmtbraoMr0h-K40wCm4_VdnaqYFUDVs56odxJnmeWvCbkv7YO_QrMm1SFSs_1L43L4jQReUHk-1pg4MRWQvtfiUw4D-DWsyBvytwklqHBbMbGbKJZ3I5dYz4x4XlLMkGnOwjtx0USjV24pZG21MZvdinl3-6QlDZlp3BvG0x9qY'
-  },
-  {
-    id: 'silver-wire',
-    name: 'Victorian Silver Wire',
-    variant: 'Antique Finish - 100g Coil',
-    price: 1250,
-    quantity: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAHV1Lx2RLcM0uKnH52L2Hy1vrrxkXW65K3WJS1dXlwn8JSTpSLEvMLeIs_yTjKP20D9NFNK5AKnss69zfyJCIyIw49DTJ8yfyk3wZJu68yAIRjpQfNENUgOdmV2zRqep63T64mI80nLnfNmgWYKpTWBM-GCpMR-XAidoVM2cxFhHfcjmBNkQp_8IVQGk8IVr4tX51TDh8U0H9sIV0b0FKVnZwIQqZ4K_5JidlZpspZWxhX7Rl8rwlZGX4WjyLyGmqBgla7du8lPd8'
-  },
-  {
-    id: 'bronze-silk',
-    name: 'Aged Bronze Silk Blend',
-    variant: 'Hand-dyed - 250m Hank',
-    price: 850,
-    quantity: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAiOkAr8Qq5sfRjxs3vO1l4H6aKR0HJKgX2vtVDJezxM0ylW6ARx-RqVffLtI7gWk31zjaUuEHQ_LOtGj_s41A4Z3dNk1pVabrqla2dz6dGHOad3f91SKy-pvo0mL0Pd-DJZuTtEqFhT9-3avIp-WEw4WryTsNnA8h6-9RxMjllrJk-UFL_L08ZOKtdYpBlE7GutN_SW43LJzzVhPnK_y0SJCxmr8meG425fns0MkUBGvvtP5GsVr6hJWppWX0s2RJ_S3ugZcMxpWI'
-  }
-];
+const CART_STORAGE_KEY = 'gilded_heirloom_cart';
 
 interface CartContextType {
   items: CartItem[];
@@ -49,7 +23,19 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>(defaultItems);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to load cart from storage', e);
+    }
+    return [];
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 

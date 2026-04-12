@@ -1,6 +1,7 @@
 import { Category, PaginatedResponse, Product, ShopApplication, SingleResponse } from './types';
 
-const API_BASE_URL = 'http://localhost:5000';
+// In production, this should be set via environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '/api');
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;

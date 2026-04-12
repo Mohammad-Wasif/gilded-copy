@@ -4,6 +4,9 @@ import { useCart } from '../../context/CartContext';
 import { api } from '../../lib/api';
 import { Product, ProductVariant } from '../../lib/types';
 import NotFound from '../NotFound';
+import { ProductDetailSkeleton } from '../../components/Skeletons';
+import { ErrorFallback } from '../../components/ErrorFallback';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,6 +15,9 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useDocumentTitle(product?.name || 'Product Details');
   
   // Selection states
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
@@ -23,6 +29,7 @@ export default function ProductDetail() {
     if (!slug) return;
     
     setLoading(true);
+    setError(false);
     // Fetch product details
     api.catalog.getProductBySlug(slug).then(res => {
       if (res.success && res.data) {
@@ -38,13 +45,13 @@ export default function ProductDetail() {
                 // filter out the current product
                 setRelatedProducts(relatedRes.data.filter(p => p.id !== res.data?.id).slice(0, 4));
               }
-           }).catch(console.error);
+           }).catch(() => {});
         }
       } else {
         setProduct(null);
       }
-    }).catch(err => {
-      console.error(err);
+    }).catch(() => {
+      setError(true);
       setProduct(null);
     }).finally(() => {
       setLoading(false);
@@ -53,7 +60,11 @@ export default function ProductDetail() {
   }, [slug]);
 
   if (loading) {
-    return <div className="py-24 text-center mt-12 text-on-surface-variant font-body"><span className="material-symbols-outlined animate-spin mr-3">refresh</span> Loading product details...</div>;
+    return <ProductDetailSkeleton />;
+  }
+
+  if (error) {
+    return <ErrorFallback title="Couldn't load product" message="We had trouble fetching this product. The server may be offline." onRetry={() => { setLoading(true); setError(false); api.catalog.getProductBySlug(slug!).then(res => { if (res.success && res.data) setProduct(res.data); }).catch(() => setError(true)).finally(() => setLoading(false)); }} />;
   }
 
   if (!product) {
@@ -68,15 +79,13 @@ export default function ProductDetail() {
     if (isOutOfStock) return;
     const cartItemObj = {
       id: product.id + '-' + (selectedVariant?.id || 'novariant'),
-      productId: product.id,
-      variantId: selectedVariant?.id || 'novariant',
       name: product.name,
       price: currentPrice,
       quantity: quantity,
-      imageUrl: product.images?.[activeImageIndex]?.imageUrl || product.images?.[0]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs",
-      variantTitle: selectedVariant?.title
+      image: product.images?.[activeImageIndex]?.imageUrl || product.images?.[0]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs",
+      variant: selectedVariant?.title || 'Standard'
     };
-    addToCart(cartItemObj as any);
+    addToCart(cartItemObj);
   };
 
 const images: import('../../lib/types').ProductImage[] = product.images?.length > 0 
@@ -320,13 +329,12 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                        e.preventDefault();
                        addToCart({
                           id: relProduct.id + '-novariant',
-                          productId: relProduct.id,
-                          variantId: 'novariant',
                           name: relProduct.name,
                           price: parseFloat(relProduct.basePrice),
                           quantity: 1,
-                          imageUrl: primaryImage
-                       } as any);
+                          image: primaryImage,
+                          variant: 'Standard'
+                       });
                      }}
                      className="bg-surface-container-lowest p-3 shadow-lg rounded-full text-primary hover:bg-primary hover:text-on-primary transition-colors"
                   >

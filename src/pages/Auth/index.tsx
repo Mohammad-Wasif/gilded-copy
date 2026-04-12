@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  useDocumentTitle(isLogin ? 'Sign In' : 'Create Account');
 
   return (
     <div className="min-h-screen bg-surface flex flex-col lg:flex-row font-body selection:bg-primary/10">

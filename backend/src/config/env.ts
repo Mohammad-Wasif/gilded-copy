@@ -9,7 +9,13 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   DIRECT_URL: z.string().min(1),
   CORS_ORIGIN: z.string().min(1),
-  LOG_LEVEL: z.string().min(1).default("info")
+  LOG_LEVEL: z.string().min(1).default("info"),
+  BETTER_AUTH_SECRET: z.string().min(16),
+  BETTER_AUTH_URL: z.string().url(),
+  CLOUDINARY_CLOUD_NAME: z.string().min(1),
+  CLOUDINARY_API_KEY: z.string().min(1),
+  CLOUDINARY_API_SECRET: z.string().min(1),
+  ADMIN_EMAIL: z.string().email().default("admin@hindustanembroidery.com"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

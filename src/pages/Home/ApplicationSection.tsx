@@ -39,16 +39,16 @@ const ApplicationSection = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {apps.map((app, i) => (
-          <Link to={`/shop?category=${app.slug}`} key={app.id} className="relative group h-96 overflow-hidden rounded-sm cursor-pointer editorial-shadow block">
+          <Link to={`/shop?application=${app.slug}`} key={app.id} className="relative group h-96 overflow-hidden rounded-sm cursor-pointer editorial-shadow block">
             <img
-              src={app.primaryImageUrl || fallbackImages[i % fallbackImages.length]}
-              alt={app.applicationLabel || app.name}
+              src={app.imageUrl || fallbackImages[i % fallbackImages.length]}
+              alt={app.name}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300"></div>
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
-              <h3 className="font-headline text-2xl text-white mb-2">{app.applicationLabel || app.name}</h3>
+              <h3 className="font-headline text-2xl text-white mb-2">{app.name}</h3>
               <p className="text-white/80 text-sm mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{app.description || 'Discover materials suited for this field.'}</p>
               <span className="text-white font-semibold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300">
                 Explore <ArrowRight size={16} />

@@ -1,5 +1,6 @@
 import { app } from "./app";
 import { env } from "./config/env";
+import { gracefulDisconnect } from "./config/db";
 import { logger } from "./lib/logger";
 
 const server = app.listen(env.PORT, () => {
@@ -12,10 +13,11 @@ const server = app.listen(env.PORT, () => {
   );
 });
 
-const shutdown = (signal: string) => {
+const shutdown = async (signal: string) => {
   logger.info({ signal }, "Shutdown signal received");
-  server.close(() => {
+  server.close(async () => {
     logger.info("HTTP server closed");
+    await gracefulDisconnect();
     process.exit(0);
   });
 };

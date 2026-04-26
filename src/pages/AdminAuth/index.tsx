@@ -1,9 +1,69 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Lock, ShieldCheck, User2 } from 'lucide-react';
+import { isAdminUser } from '../../lib/admin-auth';
+import { authClient } from '../../lib/auth-client';
 
 export default function AdminAuth() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session, isPending } = authClient.useSession();
+
+  useEffect(() => {
+    if (session?.user && isAdminUser(session.user)) {
+      navigate('/admin', { replace: true });
+    }
+  }, [navigate, session]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await authClient.signIn.email({
+        email: identifier.trim(),
+        password,
+      });
+
+      if (error) {
+        setErrorMessage(error.message || 'Invalid admin credentials.');
+        return;
+      }
+
+      const sessionResult = await authClient.getSession();
+      const adminUser = sessionResult.data?.user;
+
+      if (!isAdminUser(adminUser)) {
+        await authClient.signOut();
+        setErrorMessage('Forbidden: this account does not have admin access.');
+        return;
+      }
+
+      const redirectTarget = location.state?.from && location.state.from.startsWith('/admin')
+        ? location.state.from
+        : '/admin';
+
+      navigate(redirectTarget, { replace: true });
+    } catch (err) {
+      setErrorMessage('Unable to sign in right now. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-surface text-on-surface">
@@ -83,7 +143,7 @@ export default function AdminAuth() {
               </div>
             </div>
 
-            <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-2">
                 <label htmlFor="admin-identifier" className="px-1 text-[10px] font-bold uppercase tracking-[0.28em] text-on-surface-variant">
                   Work Email or Admin ID
@@ -94,6 +154,8 @@ export default function AdminAuth() {
                     id="admin-identifier"
                     type="text"
                     placeholder="admin@hindustanembroidery.com"
+                    value={identifier}
+                    onChange={(event) => setIdentifier(event.target.value)}
                     className="w-full rounded-2xl border border-outline-variant/30 bg-surface px-12 py-4 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
                   />
                 </div>
@@ -114,6 +176,8 @@ export default function AdminAuth() {
                     id="admin-password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                     className="w-full rounded-2xl border border-outline-variant/30 bg-surface px-12 py-4 pr-14 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
                   />
                   <button
@@ -127,6 +191,12 @@ export default function AdminAuth() {
                 </div>
               </div>
 
+              {errorMessage && (
+                <div className="rounded-2xl border border-error/30 bg-error-container px-4 py-3 text-sm font-medium text-on-error-container">
+                  {errorMessage}
+                </div>
+              )}
+
               <div className="flex flex-col gap-4 rounded-2xl bg-surface-container-low p-4 text-sm text-on-surface-variant sm:flex-row sm:items-center sm:justify-between">
                 <label className="flex items-center gap-3">
                   <input type="checkbox" className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary/20" defaultChecked />
@@ -135,8 +205,11 @@ export default function AdminAuth() {
                 <span className="text-[11px] uppercase tracking-[0.24em] text-primary">MFA enforced</span>
               </div>
 
-              <button className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-6 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-on-primary transition hover:bg-primary/92">
-                Access Admin Panel
+              <button
+                disabled={isSubmitting}
+                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-6 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-on-primary transition hover:bg-primary/92 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? 'Signing In...' : 'Access Admin Panel'}
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </button>
             </form>
@@ -149,6 +222,7 @@ export default function AdminAuth() {
                 </Link>
                 .
               </p>
+
             </div>
           </div>
         </section>

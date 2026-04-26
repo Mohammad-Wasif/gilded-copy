@@ -60,7 +60,7 @@ export const Footer = () => (
       </div>
       <div className="border-t border-outline-variant/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
         <p className="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant/60">
-          © 2024 Hindustan Embroidery. Crafting Heritage Excellence.
+          &copy; {new Date().getFullYear()} Hindustan Embroidery. Crafting Heritage Excellence.
         </p>
         <div className="flex gap-8 text-[10px] font-label uppercase tracking-widest text-on-surface-variant/40">
           <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>

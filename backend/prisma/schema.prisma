@@ -15,6 +15,7 @@ enum CategoryStatus {
 enum ProductStatus {
   DRAFT
   ACTIVE
+  HIDDEN
   ARCHIVED
 }
 
@@ -24,19 +25,43 @@ enum ProductVariantStatus {
   ARCHIVED
 }
 
+enum CustomerType {
+  RETAIL
+  WHOLESALE
+  ARTISAN
+}
+
+enum CustomerStatus {
+  NEW
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+}
+
+enum CommunicationType {
+  EMAIL
+  WHATSAPP
+  CALL
+  MEETING
+}
+
 model Category {
-  id              String          @id @default(cuid())
-  name            String          @db.VarChar(120)
-  slug            String          @unique @db.VarChar(140)
-  description     String?         @db.Text
-  primaryImageUrl String?         @db.Text
-  status          CategoryStatus  @default(ACTIVE)
-  sortOrder       Int             @default(0)
+  id              String         @id @default(cuid())
+  name            String         @db.VarChar(120)
+  slug            String         @unique @db.VarChar(140)
+  description     String?        @db.Text
+  primaryImageUrl String?        @db.Text
+  thumbnailImageUrl String?      @db.Text
+  bannerImageUrl  String?        @db.Text
+  status          CategoryStatus @default(ACTIVE)
+  sortOrder       Int            @default(0)
+  seoTitle        String?        @db.VarChar(180)
+  seoDescription  String?        @db.VarChar(320)
   parentId        String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  parent          Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  children        Category[]      @relation("CategoryHierarchy")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  parent          Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  children        Category[]     @relation("CategoryHierarchy")
   products        Product[]
 
   @@index([parentId])
@@ -46,24 +71,33 @@ model Category {
 }
 
 model Product {
-  id                String         @id @default(cuid())
-  name              String         @db.VarChar(160)
-  slug              String         @unique @db.VarChar(180)
-  shortDescription  String?        @db.VarChar(280)
-  description       String?        @db.Text
-  status            ProductStatus  @default(DRAFT)
-  basePrice         Decimal        @db.Decimal(10, 2)
-  compareAtPrice    Decimal?       @db.Decimal(10, 2)
-  sku               String?        @unique @db.VarChar(64)
-  stockQuantity     Int?
-  isFeatured        Boolean        @default(false)
-  sortOrder         Int            @default(0)
-  categoryId        String
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  category          Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  images            ProductImage[]
-  variants          ProductVariant[]
+  id                 String           @id @default(cuid())
+  name               String           @db.VarChar(160)
+  slug               String           @unique @db.VarChar(180)
+  shortDescription   String?          @db.VarChar(280)
+  description        String?          @db.Text
+  status             ProductStatus    @default(DRAFT)
+  basePrice          Decimal          @db.Decimal(10, 2)
+  compareAtPrice     Decimal?         @db.Decimal(10, 2)
+  discountPrice      Decimal?         @db.Decimal(10, 2)
+  purchasePrice      Decimal?         @db.Decimal(10, 2)
+  sku                String           @unique @db.VarChar(64)
+  stockQuantity      Int              @default(0)
+  lowStockThreshold  Int              @default(5)
+  isFeatured         Boolean          @default(false)
+  sortOrder          Int              @default(0)
+  tags               String[]         @default([])
+  supplier           String?          @db.VarChar(160)
+  categoryId         String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  category           Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  images             ProductImage[]
+  variants           ProductVariant[]
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+  logs               ProductLog[]
+  applications       ShopApplication[]
 
   @@index([categoryId])
   @@index([status])
@@ -73,15 +107,15 @@ model Product {
 }
 
 model ProductImage {
-  id         String   @id @default(cuid())
-  imageUrl   String   @db.Text
-  altText    String?  @db.VarChar(180)
-  isPrimary  Boolean  @default(false)
-  sortOrder  Int      @default(0)
-  productId  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id        String   @id @default(cuid())
+  imageUrl  String   @db.Text
+  altText   String?  @db.VarChar(180)
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([productId])
   @@index([productId, sortOrder])
@@ -91,21 +125,246 @@ model ProductImage {
 model ProductVariant {
   id            String               @id @default(cuid())
   title         String               @db.VarChar(160)
-  sku           String?              @unique @db.VarChar(64)
+  sku           String               @unique @db.VarChar(64)
   size          String?              @db.VarChar(64)
   color         String?              @db.VarChar(64)
   material      String?              @db.VarChar(64)
+  finish        String?              @db.VarChar(64)
+  imageUrl      String?              @db.Text
   status        ProductVariantStatus @default(ACTIVE)
   priceOverride Decimal?             @db.Decimal(10, 2)
-  stockQuantity Int?
+  stockQuantity Int                  @default(0)
   sortOrder     Int                  @default(0)
   productId     String
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
   product       Product              @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
 
   @@index([productId])
   @@index([status])
   @@index([productId, sortOrder])
   @@map("product_variants")
+}
+
+model ProductLog {
+  id        String   @id @default(cuid())
+  productId String
+  action    String   @db.VarChar(64)
+  details   String?  @db.Text
+  adminId   String?
+  adminName String?  @db.VarChar(160)
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("product_logs")
+}
+
+model ShopApplication {
+  id              String         @id @default(cuid())
+  name            String         @db.VarChar(120)
+  slug            String         @unique @db.VarChar(140)
+  description     String?        @db.Text
+  imageUrl        String?        @db.Text
+  status          CategoryStatus @default(ACTIVE)
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  products        Product[]
+
+  @@index([status])
+  @@index([sortOrder])
+  @@map("shop_applications")
+}
+
+// ─── Better Auth Models ──────────────────────────────────────────────
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          String   @default("user")
+  
+  // CRM Fields
+  phone         String?  @db.VarChar(32)
+  type          CustomerType @default(RETAIL)
+  status        CustomerStatus @default(NEW)
+  businessName  String?  @db.VarChar(160)
+  gstVat        String?  @db.VarChar(64)
+  country       String?  @db.VarChar(120)
+  city          String?  @db.VarChar(120)
+  notes         String?  @db.Text
+  tags          String[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  cart     Cart?
+  orders   Order[]
+  communicationLogs CommunicationLog[] @relation("CommunicationUser")
+  authoredLogs      CommunicationLog[] @relation("CommunicationAdmin")
+
+  @@map("users")
+}
+
+model CommunicationLog {
+  id        String   @id @default(cuid())
+  userId    String
+  adminId   String
+  type      CommunicationType
+  subject   String?  @db.VarChar(240)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  user      User     @relation("CommunicationUser", fields: [userId], references: [id], onDelete: Cascade)
+  admin     User     @relation("CommunicationAdmin", fields: [adminId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([adminId])
+  @@map("communication_logs")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verifications")
+}
+
+// ─── Cart Models ─────────────────────────────────────────────────────
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  variantId String?
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart    Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_items")
+}
+
+// ─── Order Models ────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2)
+  shippingFee Decimal     @db.Decimal(10, 2)
+
+  // Shipping details
+  shippingName    String @db.VarChar(160)
+  shippingPhone   String @db.VarChar(32)
+  shippingAddress String @db.Text
+  shippingCity    String @db.VarChar(120)
+  shippingState   String @db.VarChar(120)
+  shippingZip     String @db.VarChar(32)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String?
+  variantId String?
+
+  productName     String  @db.VarChar(160)
+  variantName     String? @db.VarChar(160)
+  priceAtPurchase Decimal @db.Decimal(10, 2)
+  quantity        Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
 }

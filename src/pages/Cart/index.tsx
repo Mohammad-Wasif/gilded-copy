@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, ShoppingCart, Trash2, Minus, Plus, Truck, ShieldCheck, CreditCard, Zap, Wallet } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
@@ -32,7 +33,7 @@ export default function Cart() {
       {/* Navigation: Continue Shopping */}
       <div className="mb-8">
         <Link className="inline-flex items-center text-primary font-bold text-sm hover:translate-x-[-4px] transition-transform duration-300" to="/shop">
-          <span className="material-symbols-outlined text-lg mr-2">arrow_back</span>
+          <ArrowLeft size={18} className="mr-2" />
           Continue Shopping
         </Link>
       </div>
@@ -51,7 +52,7 @@ export default function Cart() {
             {items.length === 0 ? (
               <div className="p-12 text-center bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                 <div className="w-20 h-20 mx-auto bg-surface-container-low rounded-full flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-4xl text-on-surface-variant">shopping_cart</span>
+                  <ShoppingCart size={36} className="text-on-surface-variant" />
                 </div>
                 <h3 className="text-2xl font-bold font-headline text-primary mb-2">Your cart is currently empty.</h3>
                 <p className="text-on-surface-variant mb-8">Explore our artisanal collection to start adding items.</p>
@@ -69,17 +70,17 @@ export default function Cart() {
                       <p className="text-sm text-on-surface-variant/70 font-normal">{item.variant}</p>
                     </div>
                     <button onClick={() => removeFromCart(item.id)} className="p-2 text-outline-variant hover:text-error hover:bg-error/5 rounded-full transition-all duration-300">
-                      <span className="material-symbols-outlined text-2xl">delete</span>
+                      <Trash2 size={22} />
                     </button>
                   </div>
                   <div className="flex flex-wrap items-center justify-between mt-8 gap-4">
                     <div className="flex items-center bg-surface-container-high rounded-full px-1 py-1 border border-outline-variant/20">
                       <button onClick={() => updateQuantity(item.id, -1)} className="w-10 h-10 flex items-center justify-center rounded-full text-primary hover:bg-white transition-all active:scale-90">
-                        <span className="material-symbols-outlined text-lg">remove</span>
+                        <Minus size={16} />
                       </button>
                       <span className="text-base font-bold w-12 text-center text-on-surface">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.id, 1)} className="w-10 h-10 flex items-center justify-center rounded-full text-primary hover:bg-white transition-all active:scale-90">
-                        <span className="material-symbols-outlined text-lg">add</span>
+                        <Plus size={16} />
                       </button>
                     </div>
                     <div className="text-right">
@@ -96,7 +97,7 @@ export default function Cart() {
               <div className="bg-surface-container-low/50 p-8 rounded-xl border border-outline-variant/10">
                 <div className="flex items-center gap-6">
                   <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/20 shrink-0">
-                    <span className="material-symbols-outlined text-3xl">local_shipping</span>
+                    <Truck size={28} />
                   </div>
                   <div className="flex-grow">
                     {isFreeShipping ? (
@@ -147,15 +148,15 @@ export default function Cart() {
             {/* Trust Signals */}
             <div className="grid grid-cols-1 gap-4 mb-8">
               <div className="flex items-center gap-3 text-xs text-on-surface-variant/80 font-medium">
-                <span className="material-symbols-outlined text-secondary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>verified_user</span>
+                <ShieldCheck size={16} className="text-secondary" />
                 <span>Secure Checkout Guaranteed</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-on-surface-variant/80 font-medium">
-                <span className="material-symbols-outlined text-secondary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+                <CreditCard size={16} className="text-secondary" />
                 <span>Trusted Payments Systems</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-on-surface-variant/80 font-medium">
-                <span className="material-symbols-outlined text-secondary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>speed</span>
+                <Zap size={16} className="text-secondary" />
                 <span>Fast Delivery Across India</span>
               </div>
             </div>
@@ -163,12 +164,12 @@ export default function Cart() {
             {items.length > 0 ? (
               <Link to="/checkout" className="w-full bg-[#570013] text-on-primary py-5 rounded-lg font-bold text-sm tracking-[0.2em] uppercase hover:bg-primary-container hover:shadow-2xl transition-all duration-300 active:scale-[0.98] shadow-lg mb-8 flex items-center justify-center gap-3">
                 Proceed to Checkout
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <ArrowRight size={18} />
               </Link>
             ) : (
               <button disabled className="w-full bg-surface-container text-on-surface-variant/40 py-5 rounded-lg font-bold text-sm tracking-[0.2em] uppercase cursor-not-allowed mb-8 flex items-center justify-center gap-3 border border-outline-variant/10">
                 Proceed to Checkout
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <ArrowRight size={18} />
               </button>
             )}
 
@@ -176,9 +177,9 @@ export default function Cart() {
             <div className="pt-8 border-t border-outline-variant/20">
               <p className="text-[10px] font-bold text-on-surface-variant/40 mb-4 tracking-widest uppercase text-center">Accepted Currencies &amp; Methods</p>
               <div className="flex justify-center gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-500 cursor-default">
-                <span className="material-symbols-outlined text-2xl">payments</span>
-                <span className="material-symbols-outlined text-2xl">credit_card</span>
-                <span className="material-symbols-outlined text-2xl">account_balance_wallet</span>
+                <CreditCard size={24} />
+                <CreditCard size={24} />
+                <Wallet size={24} />
               </div>
             </div>
           </div>

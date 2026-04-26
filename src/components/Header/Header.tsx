@@ -1,9 +1,10 @@
-import { ChevronDown, Search, User, Heart, ShoppingCart, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useCart } from '../../context/CartContext';
+import { Search, ShoppingCart, User, Heart, Menu, X, ChevronDown, LogOut } from 'lucide-react';
 import { api } from '../../lib/api';
 import { Category } from '../../lib/types';
+import { useCart } from '../../context/CartContext';
+import { authClient } from '../../lib/auth-client';
 
 export const AnnouncementBar = () => (
   <div className="bg-primary text-tertiary-fixed py-2 overflow-hidden border-b border-primary-container/20">
@@ -22,12 +23,13 @@ export const AnnouncementBar = () => (
 );
 
 export const Navbar = () => {
-  const { itemCount } = useCart();
+  const { itemCount, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+  const { data: session } = authClient.useSession();
 
   useEffect(() => {
     api.catalog.getCategoryTree().then(res => {
@@ -107,19 +109,42 @@ export const Navbar = () => {
               className="bg-transparent border-none focus:ring-0 text-sm w-64 placeholder:text-on-surface-variant/60 font-body ml-2"
             />
           </form>
-          <div className="flex items-center gap-4 md:gap-5">
-            <Link to="/login" className="hidden sm:block group hover:opacity-80 transition-opacity">
-              <User size={20} className="text-primary" />
-            </Link>
-            <button className="hidden sm:block group hover:opacity-80 transition-opacity">
-              <Heart size={20} className="text-primary" />
+          <div className="flex items-center gap-6 md:gap-8">
+            {session ? (
+              <div className="hidden sm:flex items-center gap-6">
+                <Link to="/dashboard" className="group flex flex-col items-center relative hover:opacity-80 transition-all cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase group-hover:bg-primary/20 transition-colors editorial-shadow shrink-0">
+                    {session.user.name.split(' ').map((n) => n[0]).join('').substring(0, 2)}
+                  </div>
+                  <span className="text-[10px] font-bold text-primary absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">Dashboard</span>
+                </Link>
+                <button 
+                  onClick={() => authClient.signOut()} 
+                  className="group flex flex-col items-center relative hover:opacity-80 transition-all cursor-pointer"
+                >
+                  <LogOut size={20} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                  <span className="text-[10px] font-bold text-primary absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="hidden sm:flex flex-col items-center relative group hover:opacity-80 transition-all cursor-pointer">
+                <User size={20} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                <span className="text-[10px] font-bold text-primary absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">Account</span>
+              </Link>
+            )}
+            <button className="hidden sm:flex flex-col items-center relative group hover:opacity-80 transition-all cursor-pointer">
+              <Heart size={20} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+              <span className="text-[10px] font-bold text-primary absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">Wishlist</span>
             </button>
-            <Link to="/cart" className="group hover:opacity-80 transition-opacity relative">
-              <ShoppingCart size={20} className="text-primary" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{itemCount}</span>
-              )}
-            </Link>
+            <button onClick={() => setIsCartOpen(true)} className="group flex flex-col items-center relative hover:opacity-80 transition-all cursor-pointer">
+              <div className="relative shrink-0">
+                <ShoppingCart size={20} className="text-on-surface-variant group-hover:text-primary transition-colors" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-white">{itemCount}</span>
+                )}
+              </div>
+              <span className="text-[10px] font-bold text-primary absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">Cart</span>
+            </button>
           </div>
         </div>
       </div>
@@ -196,13 +221,32 @@ export const Navbar = () => {
         </nav>
 
         {/* Drawer footer actions */}
-        <div className="px-6 py-5 border-t border-outline-variant/10 flex items-center gap-6">
-          <Link to="/login" className="flex items-center gap-2 text-sm font-headline text-primary">
-            <User size={18} /> Account
-          </Link>
-          <button className="flex items-center gap-2 text-sm font-headline text-on-surface-variant">
-            <Heart size={18} /> Wishlist
-          </button>
+        <div className="px-6 py-5 border-t border-outline-variant/10 flex flex-col gap-4">
+          <div className="flex items-center gap-6">
+            {session ? (
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm font-headline text-primary hover:opacity-80 transition-opacity">
+                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] uppercase">
+                  {session.user.name.split(' ').map((n) => n[0]).join('').substring(0, 2)}
+                </div>
+                {session.user.name.split(' ')[0]}
+              </Link>
+            ) : (
+              <Link to="/login" className="flex items-center gap-2 text-sm font-headline text-primary">
+                <User size={18} /> Account
+              </Link>
+            )}
+            <button className="flex items-center gap-2 text-sm font-headline text-on-surface-variant">
+              <Heart size={18} /> Wishlist
+            </button>
+          </div>
+          {session && (
+            <button 
+              onClick={() => { authClient.signOut(); setMobileOpen(false); }} 
+              className="flex items-center gap-2 text-sm font-headline text-on-surface-variant p-2 -ml-2 rounded-md hover:bg-surface-container-low transition-colors w-fit"
+            >
+              <LogOut size={18} /> Sign Out
+            </button>
+          )}
         </div>
       </div>
     </header>

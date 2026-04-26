@@ -1,22 +1,100 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Lock, ShoppingCart, Truck, CreditCard, Landmark, Wallet, Banknote, Info, ShieldCheck, Shield, RefreshCcw, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Footer } from '../../components/Footer/Footer';
 import { useCart } from '../../context/CartContext';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { api } from '../../lib/api';
+
+type PaymentMethod = 'card' | 'upi' | 'cod';
 
 export default function Payment() {
   useDocumentTitle('Payment');
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
+  const navigate = useNavigate();
+
+  const [shippingData, setShippingData] = useState<any>(null);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorVisible, setErrorVisible] = useState('');
+  const [orderPlacedId, setOrderPlacedId] = useState<string | null>(null);
+
+  // Load shipping data from sessionStorage
+  useEffect(() => {
+    const saved = sessionStorage.getItem('checkout_shipping');
+    if (saved) {
+      setShippingData(JSON.parse(saved));
+    } else {
+      // No shipping data — redirect back to checkout
+      navigate('/checkout');
+    }
+  }, [navigate]);
+
+  const shippingFee = shippingData?.shippingFee ?? 80;
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const shippingFee = subtotal >= 10000 ? 0 : 80;
   const gst = Math.round(subtotal * 0.12);
   const total = subtotal + shippingFee + gst;
+
+  const handleCompleteOrder = async () => {
+    if (!shippingData) {
+      setErrorVisible('Shipping information is missing. Please go back to checkout.');
+      return;
+    }
+    if (items.length === 0) {
+      setErrorVisible('Your cart is empty.');
+      return;
+    }
+
+    setErrorVisible('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await api.orders.createOrder(shippingData);
+
+      if (response.success) {
+        setOrderPlacedId(response.data.id);
+        clearCart();
+        sessionStorage.removeItem('checkout_shipping');
+      } else {
+        setErrorVisible(response.message || 'Failed to place order.');
+      }
+    } catch (error: any) {
+      setErrorVisible(error.message || 'An unexpected error occurred.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Success Screen ───────────────────────────────────────────────
+  if (orderPlacedId) {
+    return (
+      <div className="bg-surface text-on-surface font-body min-h-screen flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-surface-container-low p-10 rounded-2xl shadow-xl flex flex-col items-center text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-[scale-in_0.4s_ease-out]">
+            <CheckCircle2 size={40} className="text-primary" />
+          </div>
+          <h2 className="font-headline text-3xl text-primary mb-2">Order Confirmed!</h2>
+          <p className="text-on-surface-variant font-body mb-8">
+            Thank you for your purchase. Your order <span className="font-bold text-on-surface">#{orderPlacedId.slice(-6).toUpperCase()}</span> has been placed successfully.
+          </p>
+          <Link to="/dashboard/orders" className="bg-primary text-on-primary w-full py-4 font-bold tracking-widest uppercase rounded-md hover:bg-primary/90 transition-all text-center block">
+            View My Orders
+          </Link>
+          <Link to="/shop" className="mt-4 text-primary font-bold text-sm tracking-wide hover:underline">
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-primary/10 min-h-screen flex flex-col">
       {/* TopAppBar: Center-aligned, Distraction-free */}
       <header className="bg-surface-bright flex justify-between items-center px-8 h-20 w-full max-w-7xl mx-auto sticky top-0 z-50 border-b border-outline-variant/10">
         <div className="flex-1">
           <Link className="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-headline text-sm uppercase tracking-widest" to="/checkout">
-            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <ArrowLeft size={14} />
             Back to Checkout
           </Link>
         </div>
@@ -25,7 +103,7 @@ export default function Payment() {
         </div>
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-2 text-primary">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+            <Lock size={18} className="text-primary" />
             <span className="font-headline text-sm uppercase tracking-widest">Secure</span>
           </div>
         </div>
@@ -40,15 +118,15 @@ export default function Payment() {
           </div>
           <nav className="flex flex-col gap-2">
             <Link to="/cart" className="flex items-center gap-3 text-on-surface-variant p-3 opacity-60 hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined">shopping_cart</span>
+              <ShoppingCart size={20} />
               <span className="font-headline text-lg tracking-tight">Cart</span>
             </Link>
             <Link to="/checkout" className="flex items-center gap-3 text-on-surface-variant p-3 opacity-60 hover:opacity-100 transition-opacity">
-              <span className="material-symbols-outlined">local_shipping</span>
+              <Truck size={20} />
               <span className="font-headline text-lg tracking-tight">Checkout</span>
             </Link>
             <div className="flex items-center gap-3 text-primary font-bold bg-surface-container-lowest rounded-md p-3 shadow-sm shadow-black/5">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+              <CreditCard size={20} />
               <span className="font-headline text-lg tracking-tight">Payment</span>
             </div>
           </nav>
@@ -75,15 +153,25 @@ export default function Payment() {
             <p className="text-on-surface-variant">Step 3 of 3 — Complete your bespoke heirloom acquisition.</p>
           </div>
 
+          {errorVisible && (
+            <div className="p-4 bg-error-container text-on-error-container rounded-md font-body text-sm font-semibold border border-error/50">
+              {errorVisible}
+            </div>
+          )}
+
           {/* Payment Methods */}
           <div className="space-y-6">
             <h3 className="font-headline text-xl text-on-surface">Choose Payment Method</h3>
             <div className="grid grid-cols-1 gap-4">
-              {/* Credit/Debit Card Option (Active State) */}
-              <div className="bg-surface-container-lowest p-8 rounded-lg border border-primary/10 shadow-sm">
+              {/* Credit/Debit Card Option */}
+              <div
+                onClick={() => setSelectedMethod('card')}
+                className={`bg-surface-container-lowest p-8 rounded-lg border cursor-pointer transition-all ${selectedMethod === 'card' ? 'border-primary/40 shadow-sm' : 'border-outline-variant/10 hover:border-primary/20'}`}
+              >
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-primary">credit_card</span>
+                    <input type="radio" checked={selectedMethod === 'card'} onChange={() => setSelectedMethod('card')} className="text-primary focus:ring-primary w-4 h-4" />
+                    <CreditCard size={22} className="text-primary" />
                     <span className="font-headline text-lg">Credit / Debit Card</span>
                   </div>
                   <div className="flex gap-2">
@@ -92,48 +180,58 @@ export default function Payment() {
                   </div>
                 </div>
                 
-                <form className="grid grid-cols-2 gap-6">
-                  <div className="col-span-2">
-                    <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Card Number</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body tracking-[0.2em]" placeholder="XXXX XXXX XXXX XXXX" type="text"/>
-                  </div>
-                  <div className="col-span-2 md:col-span-1">
-                    <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Expiry Date</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="MM / YY" type="text"/>
-                  </div>
-                  <div className="col-span-2 md:col-span-1">
-                    <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">CVV</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="***" type="password"/>
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Name on Card</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="As it appears on your card" type="text"/>
-                  </div>
-                </form>
+                {selectedMethod === 'card' && (
+                  <form className="grid grid-cols-2 gap-6" onSubmit={e => e.preventDefault()} onClick={e => e.stopPropagation()}>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Card Number</label>
+                      <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body tracking-[0.2em]" placeholder="XXXX XXXX XXXX XXXX" type="text"/>
+                    </div>
+                    <div className="col-span-2 md:col-span-1">
+                      <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Expiry Date</label>
+                      <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="MM / YY" type="text"/>
+                    </div>
+                    <div className="col-span-2 md:col-span-1">
+                      <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">CVV</label>
+                      <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="***" type="password"/>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2">Name on Card</label>
+                      <input className="w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 px-0 py-3 font-body" placeholder="As it appears on your card" type="text"/>
+                    </div>
+                  </form>
+                )}
               </div>
 
               {/* UPI / Net Banking */}
-              <div className="bg-surface-container-low p-6 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-surface-container transition-colors">
+              <div
+                onClick={() => setSelectedMethod('upi')}
+                className={`bg-surface-container-low p-6 rounded-lg flex items-center justify-between cursor-pointer transition-all ${selectedMethod === 'upi' ? 'border border-primary/40 shadow-sm bg-surface-container-lowest' : 'border border-transparent hover:bg-surface-container'}`}
+              >
                 <div className="flex items-center gap-4">
-                  <span className="material-symbols-outlined text-on-surface-variant">account_balance</span>
-                  <span className="font-headline text-lg text-on-surface-variant group-hover:text-on-surface">UPI / Net Banking</span>
+                  <input type="radio" checked={selectedMethod === 'upi'} onChange={() => setSelectedMethod('upi')} className="text-primary focus:ring-primary w-4 h-4" />
+                  <Landmark size={22} className="text-on-surface-variant" />
+                  <span className="font-headline text-lg text-on-surface-variant">UPI / Net Banking</span>
                 </div>
-                <div className="flex gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined text-xs">account_balance_wallet</span>
-                  <span className="material-symbols-outlined text-xs">universal_currency</span>
+                <div className="flex gap-3 opacity-60">
+                  <Wallet size={12} />
+                  <Banknote size={12} />
                 </div>
               </div>
 
               {/* Cash on Delivery */}
-              <div className="bg-surface-container-low p-6 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-surface-container transition-colors">
+              <div
+                onClick={() => setSelectedMethod('cod')}
+                className={`bg-surface-container-low p-6 rounded-lg flex items-center justify-between cursor-pointer transition-all ${selectedMethod === 'cod' ? 'border border-primary/40 shadow-sm bg-surface-container-lowest' : 'border border-transparent hover:bg-surface-container'}`}
+              >
                 <div className="flex items-center gap-4">
-                  <span className="material-symbols-outlined text-on-surface-variant">payments</span>
+                  <input type="radio" checked={selectedMethod === 'cod'} onChange={() => setSelectedMethod('cod')} className="text-primary focus:ring-primary w-4 h-4" />
+                  <CreditCard size={22} className="text-on-surface-variant" />
                   <div className="flex flex-col">
-                    <span className="font-headline text-lg text-on-surface-variant group-hover:text-on-surface">Cash on Delivery</span>
+                    <span className="font-headline text-lg text-on-surface-variant">Cash on Delivery</span>
                     <span className="text-[10px] text-on-surface-variant/70 uppercase">Available for retail orders</span>
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-on-surface-variant">info</span>
+                <Info size={18} className="text-on-surface-variant" />
               </div>
             </div>
           </div>
@@ -146,16 +244,22 @@ export default function Payment() {
               </div>
               <span className="text-on-surface font-body text-sm">Billing address same as shipping address</span>
             </label>
-            <div className="mt-4 p-6 bg-surface-container-low/50 rounded-lg text-xs text-on-surface-variant leading-relaxed">
-              124 Artisan Row, Textile District, Mumbai, MH 400012, India
-            </div>
+            {shippingData && (
+              <div className="mt-4 p-6 bg-surface-container-low/50 rounded-lg text-xs text-on-surface-variant leading-relaxed">
+                {shippingData.shippingName}, {shippingData.shippingAddress}, {shippingData.shippingCity}, {shippingData.shippingState} {shippingData.shippingZip}
+              </div>
+            )}
           </div>
 
           {/* Action Area */}
           <div className="flex flex-col gap-4">
-            <button className="w-full bg-primary text-on-primary py-5 rounded-md font-headline text-lg flex items-center justify-center gap-3 hover:opacity-90 active:scale-[0.98] transition-all">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-              Complete Order
+            <button
+              onClick={handleCompleteOrder}
+              disabled={isSubmitting || items.length === 0}
+              className="w-full bg-primary text-on-primary py-5 rounded-md font-headline text-lg flex items-center justify-center gap-3 hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <Lock size={18} />
+              {isSubmitting ? 'Processing Order...' : 'Complete Order'}
             </button>
             <p className="text-center text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Your data is encrypted and secure</p>
           </div>
@@ -220,15 +324,15 @@ export default function Payment() {
           <div className="flex flex-col items-center gap-6 pt-4">
             <div className="flex items-center justify-center flex-wrap gap-6 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">verified_user</span>
+                <ShieldCheck size={14} />
                 <span className="text-[10px] font-label font-bold uppercase tracking-widest">PCI DSS</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">shield</span>
+                <Shield size={14} />
                 <span className="text-[10px] font-label font-bold uppercase tracking-widest">SSL Secure</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">published_with_changes</span>
+                <RefreshCcw size={14} />
                 <span className="text-[10px] font-label font-bold uppercase tracking-widest">14 Day Return</span>
               </div>
             </div>

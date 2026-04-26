@@ -1,11 +1,46 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail, Lock, User, ArrowRight, Github, Loader2 } from 'lucide-react';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { authClient } from '../../lib/auth-client';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   useDocumentTitle(isLogin ? 'Sign In' : 'Create Account');
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      if (isLogin) {
+        const { error } = await authClient.signIn.email({ email, password });
+        if (error) {
+          setError(error.message || 'Invalid email or password');
+          return;
+        }
+      } else {
+        const { error } = await authClient.signUp.email({ email, password, name });
+        if (error) {
+          setError(error.message || 'Failed to create account');
+          return;
+        }
+      }
+      navigate('/');
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-surface flex flex-col lg:flex-row font-body selection:bg-primary/10">
@@ -65,7 +100,13 @@ export default function Auth() {
               </p>
             </div>
 
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            {error && (
+              <div className="bg-red-50 text-red-500 p-4 rounded-sm text-sm border border-red-100 flex items-center gap-2 animate-fade-in">
+                <span className="font-bold">Error:</span> {error}
+              </div>
+            )}
+
+            <form className="space-y-6" onSubmit={handleAuth}>
               {!isLogin && (
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">Full Name</label>
@@ -73,6 +114,9 @@ export default function Auth() {
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" size={18} />
                     <input
                       type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required={!isLogin}
                       className="w-full bg-white border border-outline-variant/30 px-12 py-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all font-body rounded-sm"
                       placeholder="Alexander McQueen"
                     />
@@ -86,6 +130,9 @@ export default function Auth() {
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" size={18} />
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className="w-full bg-white border border-outline-variant/30 px-12 py-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all font-body rounded-sm"
                     placeholder="email@example.com"
                   />
@@ -103,15 +150,29 @@ export default function Auth() {
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" size={18} />
                   <input
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={8}
                     className="w-full bg-white border border-outline-variant/30 px-12 py-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all font-body rounded-sm"
                     placeholder="••••••••"
                   />
                 </div>
               </div>
 
-              <button className="w-full bg-primary text-on-primary py-4 font-headline uppercase tracking-[0.2em] font-semibold hover:bg-primary/90 transition-all flex items-center justify-center gap-3 editorial-shadow group">
-                {isLogin ? 'Sign In to Atelier' : 'Create My Account'}
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-primary text-on-primary py-4 font-headline uppercase tracking-[0.2em] font-semibold flex items-center justify-center gap-3 editorial-shadow group disabled:opacity-70 disabled:cursor-not-allowed transition-all hover:enabled:bg-primary/90"
+              >
+                {isLoading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <>
+                    {isLogin ? 'Sign In to Atelier' : 'Create My Account'}
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </button>
             </form>
 
@@ -155,7 +216,7 @@ export default function Auth() {
           <Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
           <Link to="/shipping-returns" className="hover:text-primary transition-colors">Shipping & Returns</Link>
           <Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
-          <span className="lg:ml-auto">© 2024 Hindustan Embroidery Atelier. All Rights Reserved.</span>
+          <span className="lg:ml-auto">&copy; {new Date().getFullYear()} Hindustan Embroidery Atelier. All Rights Reserved.</span>
         </footer>
       </div>
     </div>

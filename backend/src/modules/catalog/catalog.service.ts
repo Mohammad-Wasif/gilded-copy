@@ -11,6 +11,8 @@ export interface GetProductsParams {
   category?: string;
   featured?: boolean;
   status?: ProductStatus;
+  maxPrice?: number;
+  application?: string;
   sort: "newest" | "price_asc" | "price_desc" | "name_asc" | "name_desc";
 }
 
@@ -97,13 +99,31 @@ function getProductOrderBy(sort: GetProductsParams["sort"]): Prisma.ProductOrder
   }
 }
 
-function buildProductListWhere(params: Pick<GetProductsParams, "category" | "featured" | "status">): Prisma.ProductWhereInput {
+function buildProductListWhere(params: Pick<GetProductsParams, "category" | "featured" | "status" | "maxPrice" | "application">): Prisma.ProductWhereInput {
+  const categories = params.category ? params.category.split(',').map(c => c.trim()).filter(Boolean) : [];
+  
+  let categoryCondition: Prisma.CategoryWhereInput | undefined = undefined;
+  if (categories.length > 0) {
+    categoryCondition = {
+      OR: [
+        { slug: { in: categories } },
+        { parent: { slug: { in: categories } } }
+      ]
+    };
+  }
+
   return {
     status: params.status ?? ProductStatus.ACTIVE,
     isFeatured: params.featured,
-    category: params.category
+    category: categoryCondition,
+    applications: params.application ? {
+      some: {
+        slug: params.application
+      }
+    } : undefined,
+    basePrice: params.maxPrice
       ? {
-          slug: params.category
+          lte: params.maxPrice
         }
       : undefined
   };
@@ -261,6 +281,25 @@ export async function getFeaturedProducts(limit: number) {
   });
 }
 
+/**
+ * Returns "best seller" products using a merchandising proxy.
+ *
+ * This does NOT use actual sales/order data. Instead, it ranks by:
+ *   1. `isFeatured` (featured items first)
+ *   2. `sortOrder`  (manual merchandising weight)
+ *   3. `createdAt`  (newest as tiebreaker)
+ *
+ * The response includes `rankingSource: "merchandising_proxy"` so the
+ * frontend can display an appropriate label (e.g. "Staff Picks" vs
+ * "Best Sellers") depending on the source.
+ *
+ * @todo Replace with real order-based ranking once the Orders table
+ *       is implemented. Suggested approach:
+ *       - Aggregate `OrderItem.quantity` per product over rolling 30 days
+ *       - Join to Product and sort by total units sold DESC
+ *       - Cache the result (invalidate on new orders, or refresh every hour)
+ *       - Update `rankingSource` to `"order_analytics"`
+ */
 export async function getBestSellerProducts(limit: number) {
   const items = await db.product.findMany({
     where: {
@@ -273,28 +312,26 @@ export async function getBestSellerProducts(limit: number) {
 
   return {
     items,
-    rankingSource: "merchandising_proxy"
+    rankingSource: "merchandising_proxy" as const
   };
 }
 
 export async function getShopByApplicationData(limitPerCategory: number) {
-  const applications = await db.category.findMany({
+  const applications = await db.shopApplication.findMany({
     where: {
       status: CategoryStatus.ACTIVE,
-      parentId: null
     },
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     select: {
-      ...categoryBaseSelect,
-      children: {
-        where: {
-          status: CategoryStatus.ACTIVE
-        },
-        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-        select: {
-          ...categoryBaseSelect
-        }
-      },
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      imageUrl: true,
+      status: true,
+      sortOrder: true,
+      createdAt: true,
+      updatedAt: true,
       products: {
         where: {
           status: ProductStatus.ACTIVE
@@ -306,11 +343,7 @@ export async function getShopByApplicationData(limitPerCategory: number) {
     }
   });
 
-  return applications.map((application) => ({
-    ...application,
-    applicationKey: application.slug,
-    applicationLabel: application.name
-  }));
+  return applications;
 }
 
 export async function searchProducts(params: SearchProductsParams) {

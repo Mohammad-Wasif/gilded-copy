@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ChevronRight, Minus, Plus, Briefcase, CheckCircle2, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { api } from '../../lib/api';
 import { Product, ProductVariant } from '../../lib/types';
@@ -37,6 +38,25 @@ export default function ProductDetail() {
         if (res.data.variants && res.data.variants.length > 0) {
           setSelectedVariant(res.data.variants[0]);
         }
+        
+        // Save to recently viewed
+        try {
+          const stored = localStorage.getItem('recentlyViewed');
+          let viewed = stored ? JSON.parse(stored) : [];
+          // Remove if it's already in the list
+          viewed = viewed.filter((p: any) => p.slug !== res.data.slug);
+          // Add to front
+          const primaryImage = res.data.images?.find((img: any) => img.isPrimary)?.imageUrl || res.data.images?.[0]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs";
+          
+          viewed.unshift({
+            name: res.data.name,
+            slug: res.data.slug,
+            price: res.data.basePrice,
+            image: primaryImage
+          });
+          // Keep only last 3
+          localStorage.setItem('recentlyViewed', JSON.stringify(viewed.slice(0, 3)));
+        } catch (e) {}
         
         // Fetch related products based on category
         if (res.data.category?.slug) {
@@ -96,13 +116,13 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
     <div className="max-w-screen-2xl mx-auto px-8 py-12">
       <nav className="mb-12 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-on-surface-variant/60">
         <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-        <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+        <ChevronRight size={10} />
         <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
-        <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+        <ChevronRight size={10} />
         {product.category && (
            <>
             <Link to={`/shop?category=${product.category.slug}`} className="hover:text-primary transition-colors">{product.category.name}</Link>
-            <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+            <ChevronRight size={10} />
            </>
         )}
         <span className="text-on-surface">{product.name}</span>
@@ -191,7 +211,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                   className="px-4 py-2 hover:bg-surface-container-low transition-colors"
                   disabled={isOutOfStock}
                 >
-                  <span className="material-symbols-outlined text-sm">remove</span>
+                  <Minus size={14} />
                 </button>
                 <span className="w-12 text-center font-body">{quantity}</span>
                 <button 
@@ -199,7 +219,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                   className="px-4 py-2 hover:bg-surface-container-low transition-colors"
                   disabled={isOutOfStock}
                 >
-                  <span className="material-symbols-outlined text-sm">add</span>
+                  <Plus size={14} />
                 </button>
               </div>
               <button 
@@ -215,7 +235,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
           {/* Wholesale Box */}
           <div className="bg-surface-container-low p-6 rounded-md space-y-3">
             <div className="flex items-center gap-2 text-primary">
-              <span className="material-symbols-outlined">business_center</span>
+              <Briefcase size={22} className="text-primary" />
               <h4 className="font-bold text-sm uppercase tracking-wider">Wholesale Advantage</h4>
             </div>
             <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -254,7 +274,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                 <ul className="space-y-4 text-sm">
                   {['Premium Craftsmanship', 'Quality Assured Material', 'Tested for Durability', 'Curated for Excellence'].map(highlight => (
                   <li key={highlight} className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-tertiary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <CheckCircle2 size={18} className="text-tertiary" />
                     <span className="text-on-surface">{highlight}</span>
                   </li>
                   ))}
@@ -338,7 +358,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                      }}
                      className="bg-surface-container-lowest p-3 shadow-lg rounded-full text-primary hover:bg-primary hover:text-on-primary transition-colors"
                   >
-                    <span className="material-symbols-outlined">add_shopping_cart</span>
+                    <ShoppingCart size={22} />
                   </button>
                 </div>
               </Link>

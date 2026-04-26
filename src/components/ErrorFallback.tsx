@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CloudOff } from 'lucide-react';
 
 interface ErrorFallbackProps {
   title?: string;
@@ -15,7 +15,7 @@ export const ErrorFallback = ({
   onRetry
 }: ErrorFallbackProps) => (
   <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
-    <span className="material-symbols-outlined text-6xl text-primary/20 mb-6">cloud_off</span>
+    <CloudOff size={56} className="text-primary/20 mb-6" />
     <h3 className="font-headline text-xl text-on-surface mb-2">{title}</h3>
     <p className="text-on-surface-variant text-sm max-w-md mb-6">{message}</p>
     {onRetry && (

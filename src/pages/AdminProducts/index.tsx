@@ -406,7 +406,7 @@ export default function AdminProducts() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary/70">Product Catalogue</p>
-          <h2 className="text-4xl font-headline text-primary mt-1">Curated Inventory</h2>
+          <h2 className="text-2xl md:text-4xl font-headline text-primary mt-1">Curated Inventory</h2>
           <p className="text-sm text-on-surface-variant mt-1 max-w-lg">
             Manage embroidery pieces, raw materials, and heirloom collections with full variant and stock control.
           </p>
@@ -416,7 +416,7 @@ export default function AdminProducts() {
             <button onClick={() => setViewMode('list')} className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition ${viewMode === 'list' ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>Catalogue</button>
             <button onClick={() => setViewMode('stock')} className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition ${viewMode === 'stock' ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>Stock View</button>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={exportCSV}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-2xl border border-outline-variant/30 text-on-surface font-semibold hover:bg-surface-container-low transition"
@@ -815,7 +815,7 @@ export default function AdminProducts() {
           {/* Backdrop */}
           <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={() => { if (!saving) setEditorOpen(false); }} />
           {/* Panel */}
-          <div className="w-full max-w-2xl bg-surface overflow-y-auto shadow-2xl border-l border-outline-variant/20">
+          <div className="h-full w-full max-w-full md:max-w-2xl bg-surface overflow-y-auto shadow-2xl border-l border-outline-variant/20 ml-auto">
             <div className="sticky top-0 z-10 bg-surface border-b border-outline-variant/15 px-6 pt-4 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div>

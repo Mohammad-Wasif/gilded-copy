@@ -481,7 +481,7 @@ export default function AdminCategories() {
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary/70">Admin Taxonomy Desk</p>
-            <h2 className="text-4xl text-primary">Dynamic Category Manager</h2>
+            <h2 className="text-2xl md:text-4xl text-primary">Dynamic Category Manager</h2>
             <p className="max-w-2xl text-sm leading-7 text-on-surface-variant">
               Add nested categories, drag siblings into order, toggle visibility, and manage search metadata from one place.
             </p>
@@ -960,7 +960,7 @@ export default function AdminCategories() {
                 ['bannerImageUrl', 'Banner Image'],
               ] as Array<[ImageField, string]>).map(([field, label]) => (
                 <div key={field} className="space-y-3">
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4">
                     <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-on-surface-variant">{label}</span>
                     <div className="flex items-center gap-2">
                       <label className="cursor-pointer rounded-xl border border-outline-variant/20 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary transition hover:border-primary">

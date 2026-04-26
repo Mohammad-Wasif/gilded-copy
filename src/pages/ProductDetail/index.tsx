@@ -113,8 +113,8 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                  : [{ imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs", altText: product.name, isPrimary: true }];
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-8 py-12">
-      <nav className="mb-12 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-on-surface-variant/60">
+    <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-12">
+      <nav className="mb-6 md:mb-12 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-on-surface-variant/60">
         <Link to="/" className="hover:text-primary transition-colors">Home</Link>
         <ChevronRight size={10} />
         <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
@@ -131,7 +131,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         {/* Image Gallery */}
         <div className="lg:col-span-7 grid grid-cols-12 gap-4">
-          <div className="col-span-2 space-y-4">
+          <div className="hidden md:block md:col-span-2 space-y-4">
             {images.slice(0, 4).map((img, idx) => (
               <div 
                 key={idx}
@@ -142,7 +142,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
               </div>
             ))}
           </div>
-          <div className="col-span-10 relative">
+          <div className="col-span-12 md:col-span-10 relative">
             <div className="bg-surface-container-low rounded-sm overflow-hidden aspect-[4/5] flex items-center justify-center">
               <img src={images[activeImageIndex].imageUrl} alt={images[activeImageIndex].altText || product.name} className="w-full h-full object-cover scale-105 transform translate-x-4 translate-y-4" />
             </div>
@@ -151,6 +151,17 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
                  <p className="font-headline italic text-primary text-sm">"The reflection of pure excellence adds an ethereal glow to every stitch."</p>
                </div>
             )}
+            
+            {/* Mobile dots indicator */}
+            <div className="md:hidden absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+              {images.slice(0, 4).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-colors ${activeImageIndex === idx ? 'bg-primary' : 'bg-outline-variant/50'}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -161,7 +172,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
               <span className="text-xs font-label uppercase tracking-[0.2em] text-on-surface-variant">{product.category?.name || 'Collection'}</span>
               <span className="text-xs font-label text-on-surface-variant/50">SKU: {selectedVariant?.sku || product.sku}</span>
             </div>
-            <h1 className="font-headline text-4xl lg:text-5xl text-primary leading-tight">{product.name}</h1>
+            <h1 className="font-headline text-2xl md:text-4xl lg:text-5xl text-primary leading-tight">{product.name}</h1>
             
             {product.shortDescription && (
               <p className="text-on-surface-variant font-body">{product.shortDescription}</p>
@@ -170,7 +181,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
 
           <div className="space-y-6">
             <div className="flex items-baseline gap-4">
-              <span className="text-3xl font-body font-semibold text-on-surface">₹{currentPrice.toFixed(2)}</span>
+              <span className="text-2xl md:text-3xl font-body font-semibold text-on-surface">₹{currentPrice.toFixed(2)}</span>
               {comparePrice && comparePrice > currentPrice && (
                 <span className="text-sm text-on-surface-variant/60 line-through">₹{comparePrice.toFixed(2)}</span>
               )}
@@ -336,7 +347,7 @@ const images: import('../../lib/types').ProductImage[] = product.images?.length 
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
           {relatedProducts.map((relProduct) => {
             const primaryImage = relProduct.images?.find(img => img.isPrimary)?.imageUrl || relProduct.images?.[0]?.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuAZPQREz8-naJ4wWAOkwRk66GueD4ScXcmg8ufMnaqoESkmpPt0m1D0yOH_xJI0SKkvaL5rLRhUJ_P6PIa9DdkHY-i3CmQecruzfthvI66Kep5Sb2rAVZ4Sqc3jBqE8kDb1YHHhIIXV3JWmuWYyjIT9VTxXhBWN41wJPGRO6ZFCG4mJAOSay-Q6gQUzqtCTrKBnRwpo92i1k-k5TGiSs3byHQ--IYPtXiFSnuv40p1XSnvQmdTRbwkd6s2M9ky6AP4zqSbz5TUVsqs";
             return (

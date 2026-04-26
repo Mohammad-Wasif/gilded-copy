@@ -97,19 +97,19 @@ export default function Checkout() {
         </nav>
       </aside>
 
-      <main className="grow max-w-7xl mx-auto px-6 py-12 lg:pl-72 lg:pr-8 w-full">
+      <main className="grow max-w-7xl mx-auto px-4 md:px-6 py-12 lg:pl-72 lg:pr-8 w-full">
         {/* Progress Metaphor: Thread & Needle */}
         <div className="flex items-center justify-center mb-16 gap-4">
           <div className="flex flex-col items-center">
             <div className="w-3 h-3 rounded-full bg-tertiary"></div>
             <span className="text-[10px] font-body uppercase tracking-tighter mt-2 text-on-surface-variant">Review</span>
           </div>
-          <div className="h-px w-24 bg-tertiary"></div>
+          <div className="h-px w-12 md:w-24 bg-tertiary"></div>
           <div className="flex flex-col items-center">
             <div className="w-4 h-4 rounded-full border-4 border-primary bg-surface ring-2 ring-primary/20"></div>
             <span className="text-[10px] font-body uppercase tracking-widest mt-2 text-primary font-bold">Shipping</span>
           </div>
-          <div className="h-px w-24 bg-outline-variant"></div>
+          <div className="h-px w-12 md:w-24 bg-outline-variant"></div>
           <div className="flex flex-col items-center">
             <div className="w-3 h-3 rounded-full bg-outline-variant"></div>
             <span className="text-[10px] font-body uppercase tracking-tighter mt-2 text-on-surface-variant">Payment</span>
@@ -126,7 +126,7 @@ export default function Checkout() {
           {/* Left Column: Shipping Form */}
           <div className="lg:col-span-7">
             <section className="mb-12">
-              <h2 className="font-headline text-3xl text-primary mb-8">Shipping &amp; Delivery</h2>
+              <h2 className="font-headline text-2xl md:text-3xl text-primary mb-8">Shipping &amp; Delivery</h2>
               <div className="space-y-8">
                 <div>
                   <h3 className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant mb-6">Shipping Address</h3>

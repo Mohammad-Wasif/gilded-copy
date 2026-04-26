@@ -45,7 +45,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-surface flex flex-col lg:flex-row font-body selection:bg-primary/10">
       {/* Visual Side: Heritage & Artisanship */}
-      <div className="lg:w-1/2 relative overflow-hidden bg-primary order-2 lg:order-1">
+      <div className="h-[35vh] lg:h-auto lg:w-1/2 relative overflow-hidden bg-primary order-2 lg:order-1">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnqUSLjbRrKKwODC1aB1REM9ewPNxz0JbbIA5IhSdPcXNd06NbPrVsl8lQF9PNmy0SqKQloVKryaE-pt4sWqHP7zwBNxMfzaFJ8QhfT7DWuCVa15HdRYmrPKAuT09_TQ8iz9xjG7eV72-UYNrzEGLnOuTmjbyCsEHZhoqz8W2nECQ0hOeqVVQ-uwjy9QHcKzwrcqOruOxg3_gXR0f3hwcvzTM27dCIFJJCzpxjFduE9ctsypi-zGRvOhxmKTTF64vYjS1VSqq7hJs"
           alt="Artisan at work"
@@ -57,11 +57,11 @@ export default function Auth() {
             <div className="inline-block px-4 py-1.5 rounded-full border border-on-primary/20 bg-on-primary/5 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.3em]">
               Heritage Atelier
             </div>
-            <h2 className="font-headline text-5xl lg:text-6xl italic leading-[1.1]">The Craft of Identity.</h2>
-            <p className="text-lg opacity-90 leading-relaxed font-light">
+            <h2 className="font-headline text-3xl lg:text-5xl xl:text-6xl italic leading-[1.1]">The Craft of Identity.</h2>
+            <p className="text-sm md:text-lg opacity-90 leading-relaxed font-light">
               Join a community dedicated to the preservation of heritage needlework and bespoke luxury. Access exclusive collections and artisanal resources.
             </p>
-            <div className="pt-8 flex items-center gap-12 border-t border-on-primary/10">
+            <div className="pt-4 md:pt-8 hidden lg:flex items-center gap-12 border-t border-on-primary/10">
               <div>
                 <p className="text-3xl font-headline italic">5k+</p>
                 <p className="text-[10px] uppercase tracking-widest opacity-60 mt-1">Global Artisans</p>
@@ -89,7 +89,7 @@ export default function Auth() {
           </Link>
         </header>
 
-        <main className="flex-1 flex flex-col justify-center px-8 lg:px-24 py-20 max-w-2xl mx-auto w-full">
+        <main className="flex-1 flex flex-col justify-center px-6 md:px-8 lg:px-24 py-10 md:py-20 max-w-2xl mx-auto w-full">
           <div className="space-y-10 animate-fade-in">
             <div className="space-y-4">
               <h1 className="font-headline text-4xl text-primary leading-tight">

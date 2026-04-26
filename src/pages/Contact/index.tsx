@@ -24,7 +24,7 @@ export default function Contact() {
   return (
     <>
       {/* ── Hero / Intro ──────────────────────────────────────── */}
-      <section className="max-w-screen-2xl mx-auto px-8 pt-20 pb-0">
+      <section className="max-w-screen-2xl mx-auto px-4 md:px-8 pt-20 pb-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           {/* Left: info panel */}
           <div className="space-y-16">
@@ -32,7 +32,7 @@ export default function Contact() {
               <span className="text-[10px] font-label uppercase tracking-[0.4em] text-on-surface-variant/60 block">
                 Get in Touch
               </span>
-              <h1 className="font-headline text-5xl lg:text-6xl text-primary leading-[1.1] italic">
+              <h1 className="font-headline text-3xl md:text-5xl lg:text-6xl text-primary leading-[1.1] italic">
                 Inquiries &amp; Private<br />Appointments
               </h1>
               <div className="h-px w-16 bg-primary/20" />
@@ -75,7 +75,7 @@ export default function Contact() {
           </div>
 
           {/* Right: contact form */}
-          <div className="bg-surface-bright border border-outline-variant/10 shadow-sm p-10 lg:p-14 rounded-sm">
+          <div className="bg-surface-bright border border-outline-variant/10 shadow-sm p-6 md:p-10 lg:p-14 rounded-sm">
             {submitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-20 space-y-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
@@ -95,7 +95,7 @@ export default function Contact() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant block">
                       First Name
@@ -183,9 +183,9 @@ export default function Contact() {
       </section>
 
       {/* ── Quote Banner ──────────────────────────────────────── */}
-      <section className="mt-24 bg-primary py-24 px-8 text-center">
+      <section className="mt-24 bg-primary py-12 px-4 md:py-24 md:px-8 text-center">
         <div className="max-w-3xl mx-auto space-y-8">
-          <blockquote className="font-headline text-3xl lg:text-5xl text-on-primary italic leading-tight">
+          <blockquote className="font-headline text-2xl md:text-3xl lg:text-5xl text-on-primary italic leading-tight">
             "True luxury is found in the patience of the hand."
           </blockquote>
           <p className="text-on-primary/70 text-sm font-body max-w-xl mx-auto leading-relaxed">

@@ -29,17 +29,17 @@ const ApplicationSection = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   if (error) return <ErrorFallback title="Couldn't load applications" message={error} onRetry={fetchData} />;
-  if (loading) return <section className="py-24 px-8 max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-64 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-80 mx-auto animate-pulse" /></div><CategoryGridSkeleton /></section>;
+  if (loading) return <section className="py-12 px-4 md:py-24 md:px-8 max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-64 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-80 mx-auto animate-pulse" /></div><CategoryGridSkeleton /></section>;
 
   return (
-    <section className="py-24 px-8 max-w-screen-2xl mx-auto">
+    <section className="py-12 px-4 md:py-24 md:px-8 max-w-screen-2xl mx-auto">
       <div className="text-center mb-16">
-        <h2 className="font-headline text-4xl text-primary mb-4">Shop by Application</h2>
+        <h2 className="font-headline text-2xl md:text-4xl text-primary mb-4">Shop by Application</h2>
         <p className="font-body text-on-surface-variant text-lg">Find materials based on your use case</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {apps.map((app, i) => (
-          <Link to={`/shop?application=${app.slug}`} key={app.id} className="relative group h-96 overflow-hidden rounded-sm cursor-pointer editorial-shadow block">
+          <Link to={`/shop?application=${app.slug}`} key={app.id} className="relative group h-64 md:h-96 overflow-hidden rounded-sm cursor-pointer editorial-shadow block">
             <img
               src={app.imageUrl || fallbackImages[i % fallbackImages.length]}
               alt={app.name}

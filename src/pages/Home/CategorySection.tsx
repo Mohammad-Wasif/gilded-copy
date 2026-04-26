@@ -28,12 +28,12 @@ const CategorySection = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   if (error) return <ErrorFallback title="Couldn't load categories" message={error} onRetry={fetchData} />;
-  if (loading) return <section className="py-24 px-8 max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-48 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-72 mx-auto animate-pulse" /></div><CategoryGridSkeleton count={3} /></section>;
+  if (loading) return <section className="py-12 px-4 md:py-24 md:px-8 max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-48 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-72 mx-auto animate-pulse" /></div><CategoryGridSkeleton count={3} /></section>;
 
   return (
-    <section className="py-24 px-8 max-w-screen-2xl mx-auto border-t border-outline-variant/10">
+    <section className="py-12 px-4 md:py-24 md:px-8 max-w-screen-2xl mx-auto border-t border-outline-variant/10">
       <div className="text-center mb-16">
-        <h2 className="font-headline text-5xl text-primary leading-tight">Shop by Category</h2>
+        <h2 className="font-headline text-3xl md:text-5xl text-primary leading-tight">Shop by Category</h2>
         <div className="w-24 h-px bg-primary/20 mx-auto mt-6"></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -42,7 +42,7 @@ const CategorySection = () => {
           const remainingCount = Math.max(0, (cat._count?.children || 0) - subNames.length);
           
           return (
-            <Link to={`/shop?category=${cat.slug}`} key={cat.id} className="relative group h-[400px] overflow-hidden bg-surface-container cursor-pointer block">
+            <Link to={`/shop?category=${cat.slug}`} key={cat.id} className="relative group h-[280px] md:h-[400px] overflow-hidden bg-surface-container cursor-pointer block">
               <img
                 src={cat.primaryImageUrl || fallbackImages[i % fallbackImages.length]}
                 alt={cat.name}
@@ -51,7 +51,7 @@ const CategorySection = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 transition-colors duration-500"></div>
               <div className="absolute bottom-8 left-8 right-8 transition-transform duration-500 group-hover:-translate-y-4">
-                <h3 className="font-headline text-3xl text-white mb-2">{cat.name}</h3>
+                <h3 className="font-headline text-xl md:text-3xl text-white mb-2">{cat.name}</h3>
                 {subNames.length > 0 && <p className="font-body text-white/70 text-sm">{subNames.join(", ")}{remainingCount > 0 ? `, +${remainingCount} more` : ''}</p>}
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-white p-8 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">

@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 
 const WholesaleSection = () => (
-  <section className="bg-surface-container-low py-24 px-8 border-t border-outline-variant/10">
+  <section className="bg-surface-container-low py-12 px-4 md:py-24 md:px-8 border-t border-outline-variant/10">
     <div className="max-w-screen-2xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
         <div className="order-2 lg:order-1">
-          <h2 className="font-headline text-4xl text-primary mb-8 leading-tight">Bulk Orders? Get Wholesale Pricing & Discounts</h2>
+          <h2 className="font-headline text-2xl md:text-4xl text-primary mb-6 md:mb-8 leading-tight">Bulk Orders? Get Wholesale Pricing & Discounts</h2>
           <ul className="space-y-6 mb-10">
             {[
               { title: "Low Minimum Order Quantity", desc: "Start your bulk journey with just 10 units per SKU." },
@@ -33,10 +33,10 @@ const WholesaleSection = () => (
               className="w-full aspect-[3/4] object-cover editorial-shadow rounded-sm"
               referrerPolicy="no-referrer"
             />
-            <div className="h-24 bg-primary/5 border border-primary/10 rounded-sm"></div>
+            <div className="h-24 bg-primary/5 border border-primary/10 rounded-sm hidden md:block"></div>
           </div>
           <div className="pt-12 space-y-4">
-            <div className="h-24 bg-tertiary-container/10 border border-tertiary-container/20 rounded-sm"></div>
+            <div className="h-24 bg-tertiary-container/10 border border-tertiary-container/20 rounded-sm hidden md:block"></div>
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzpEQjBRESzWV-0VBOZGn7UB8xUJIXrTf0kj2HzEv0jxsHkRfaRmB1-BuTSvVFom6XkDkgqtwQejQ_BieG-FOIejfpIy8MFEc_sVYYeY0sseZAjEUvo1tQGcnA5QfGtjyjg0tn2pJrYWiNjLlp9J5PEvU14AkRCjfhU7SYUbzDxPLZnts-bYacZK-fpfdmp_xwOhfxTPkdh6W-1Q7jcs-C9CjcJ2Y6Tja5zu9l2T6iGGPTJz9xajOVAyr_r3XpC4KOqJpGB-XsjcE"
               alt="Artisanal Work"

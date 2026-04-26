@@ -25,13 +25,13 @@ const BestSellers = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   if (error) return <ErrorFallback title="Couldn't load best sellers" message={error} onRetry={fetchData} />;
-  if (loading) return <section className="py-24 bg-surface-container-low px-8"><div className="max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-48 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-80 mx-auto animate-pulse" /></div><ProductGridSkeleton /></div></section>;
+  if (loading) return <section className="py-12 bg-surface-container-low px-4 md:py-24 md:px-8"><div className="max-w-screen-2xl mx-auto"><div className="text-center mb-16"><div className="h-8 bg-surface-container-high rounded w-48 mx-auto mb-4 animate-pulse" /><div className="h-5 bg-surface-container-high rounded w-80 mx-auto animate-pulse" /></div><ProductGridSkeleton /></div></section>;
 
   return (
-    <section className="py-24 bg-surface-container-low px-8">
+    <section className="py-12 bg-surface-container-low px-4 md:py-24 md:px-8">
       <div className="max-w-screen-2xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="font-headline text-4xl text-primary mb-4">Best Sellers</h2>
+          <h2 className="font-headline text-2xl md:text-4xl text-primary mb-4">Best Sellers</h2>
           <p className="font-body text-on-surface-variant text-lg">Most popular materials trusted by our customers</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

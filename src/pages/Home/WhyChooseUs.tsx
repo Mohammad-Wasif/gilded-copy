@@ -8,13 +8,13 @@ const features = [
 ];
 
 const WhyChooseUs = () => (
-  <section className="bg-surface py-24 px-8 border-t border-outline-variant/10">
+  <section className="bg-surface py-12 px-4 md:py-24 md:px-8 border-t border-outline-variant/10">
     <div className="max-w-screen-2xl mx-auto">
       <div className="text-center mb-20">
-        <h2 className="font-headline text-5xl text-primary leading-tight">Why Choose Hindustan Embroidery</h2>
+        <h2 className="font-headline text-3xl md:text-5xl text-primary leading-tight">Why Choose Hindustan Embroidery</h2>
         <div className="w-24 h-px bg-primary/20 mx-auto mt-6"></div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12 text-center">
         {features.map((f) => (
           <div key={f.title} className="flex flex-col items-center">
             <div className="w-16 h-16 flex items-center justify-center mb-6">

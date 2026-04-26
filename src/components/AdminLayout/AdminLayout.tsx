@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { authClient } from '../../lib/auth-client';
 
 export function AdminLayout() {
@@ -6,6 +7,22 @@ export function AdminLayout() {
   const navigate = useNavigate();
   const { data: session } = authClient.useSession();
   const adminIdentifier = session?.user?.email ?? 'Authorized User';
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isSidebarOpen]);
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const navLinks = [
     { name: 'Dashboard', path: '/admin', icon: 'dashboard' },
@@ -25,9 +42,30 @@ export function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f7f1e4_0%,#f9f6ef_100%)] text-on-surface md:grid md:grid-cols-[clamp(15rem,22vw,18.5rem)_minmax(0,1fr)]">
+      {/* Mobile Sidebar Backdrop */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* SideNavBar */}
-      <nav aria-label="Sidebar" className="hidden min-h-screen flex-col border-r border-primary/10 bg-[linear-gradient(180deg,#5f1b17_0%,#7d261f_100%)] px-[clamp(1.1rem,1.8vw,1.75rem)] pt-[clamp(1.25rem,2vw,2rem)] pb-0 text-white md:flex">
-        <div className="mb-8 flex flex-col gap-2 border-b border-white/10 pb-6">
+      <nav 
+        aria-label="Sidebar" 
+        className={`fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-primary/10 bg-[linear-gradient(180deg,#5f1b17_0%,#7d261f_100%)] px-[clamp(1.1rem,1.8vw,1.75rem)] pt-[clamp(1.25rem,2vw,2rem)] pb-0 text-white transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:w-auto md:min-h-screen ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="mb-8 flex flex-col gap-2 border-b border-white/10 pb-6 relative">
+          <button 
+            onClick={() => setIsSidebarOpen(false)}
+            className="absolute -right-2 top-0 p-2 text-white/70 hover:text-white md:hidden"
+            aria-label="Close menu"
+          >
+            <span className="material-symbols-outlined text-[20px]">close</span>
+          </button>
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/70">Hindustan Embroidery</p>
           <h1 className="font-headline text-2xl tracking-tight text-white">Admin Portal</h1>
           <p className="text-sm font-medium text-white/70">Operations for orders, inventory, and artisan workflows</p>
@@ -61,11 +99,18 @@ export function AdminLayout() {
       </nav>
 
       {/* Main Content */}
-      <main className="min-h-screen min-w-0">
-        <header className="sticky top-0 z-40 flex w-full items-center justify-between border-b border-primary/10 bg-[#fbf8f2]/90 px-[clamp(1rem,2vw,2.5rem)] py-[clamp(0.9rem,1.4vw,1.1rem)] backdrop-blur-md">
-          <button className="md:hidden text-primary p-2">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
+      <main className="min-h-screen min-w-0 flex flex-col">
+        <header className="sticky top-0 z-40 flex w-full items-center justify-between border-b border-primary/10 bg-[#fbf8f2]/90 px-[clamp(1rem,2vw,2.5rem)] py-[clamp(0.75rem,1.4vw,1.1rem)] backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="md:hidden text-primary p-2 -ml-2"
+              aria-label="Open menu"
+            >
+              <span className="material-symbols-outlined">menu</span>
+            </button>
+            <h2 className="text-lg font-headline text-primary md:hidden">Admin</h2>
+          </div>
           
           <div className="flex-1 max-w-md hidden md:block">
             <div className="relative group">
@@ -89,9 +134,11 @@ export function AdminLayout() {
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-md border border-outline-variant/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant transition hover:border-primary hover:text-primary"
+              className="flex items-center justify-center rounded-md border border-outline-variant/20 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant transition hover:border-primary hover:text-primary md:px-4"
+              title="Logout"
             >
-              Logout
+              <span className="hidden md:inline">Logout</span>
+              <span className="material-symbols-outlined text-[18px] md:hidden">logout</span>
             </button>
           </div>
         </header>

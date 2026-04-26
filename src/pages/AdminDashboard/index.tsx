@@ -178,7 +178,7 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h2 className="text-3xl font-headline text-primary mb-2">Hindustan Embroidery Overview</h2>
+          <h2 className="text-2xl md:text-3xl font-headline text-primary mb-2">Hindustan Embroidery Overview</h2>
           <p className="text-on-surface-variant text-sm font-body">
             Track studio operations, active orders, and inventory signals across the Hindustan Embroidery admin desk.
           </p>
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
                 <span className="material-symbols-outlined text-primary bg-primary-fixed/50 p-2 rounded-md">shopping_bag</span>
               </div>
               <div className="z-10">
-                <h3 className="text-4xl font-headline text-primary">{stats.totalOrders}</h3>
+                <h3 className="text-3xl md:text-4xl font-headline text-primary">{stats.totalOrders}</h3>
                 <p className="text-xs text-on-surface-variant mt-2 font-body">All time orders placed</p>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                 <span className="material-symbols-outlined text-tertiary bg-tertiary-fixed/50 p-2 rounded-md">payments</span>
               </div>
               <div className="z-10">
-                <h3 className="text-3xl font-headline text-on-surface">{formatCurrency(stats.totalRevenue)}</h3>
+                <h3 className="text-2xl md:text-3xl font-headline text-on-surface">{formatCurrency(stats.totalRevenue)}</h3>
                 <p className="text-xs text-on-surface-variant mt-2 font-body">Total revenue earned</p>
               </div>
             </div>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                 <span className="material-symbols-outlined text-error bg-error-container/50 p-2 rounded-md">schedule</span>
               </div>
               <div className="z-10">
-                <h3 className="text-4xl font-headline text-error">{stats.pendingOrders}</h3>
+                <h3 className="text-3xl md:text-4xl font-headline text-error">{stats.pendingOrders}</h3>
                 <p className="text-xs text-on-surface-variant mt-2 font-body">
                   {stats.pendingOrders > 0 ? 'Requires immediate action' : 'All caught up!'}
                 </p>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                 <span className="material-symbols-outlined text-secondary bg-secondary-container/50 p-2 rounded-md">inventory_2</span>
               </div>
               <div className="z-10">
-                <h3 className="text-4xl font-headline text-on-surface">{stats.totalProducts}</h3>
+                <h3 className="text-3xl md:text-4xl font-headline text-on-surface">{stats.totalProducts}</h3>
                 <p className="text-xs text-on-surface-variant mt-2 font-body">
                   {stats.totalCustomers} registered customers
                 </p>

@@ -393,18 +393,18 @@ export default function AdminOrders() {
   return (
     <div className="space-y-5">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.8fr)]">
-        <div className="rounded-[28px] border border-primary/10 bg-[linear-gradient(135deg,#fffaf3_0%,#f7f0e5_56%,#f0e4d0_100%)] p-7 shadow-[0_24px_70px_-40px_rgba(87,0,19,0.42)]">
+        <div className="rounded-[28px] border border-primary/10 bg-[linear-gradient(135deg,#fffaf3_0%,#f7f0e5_56%,#f0e4d0_100%)] p-4 md:p-7 shadow-[0_24px_70px_-40px_rgba(87,0,19,0.42)]">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary/70">Orders Command Center</p>
-          <h2 className="mt-2 text-4xl leading-tight text-primary">Orders Ledger</h2>
+          <h2 className="mt-2 text-2xl md:text-4xl leading-tight text-primary">Orders Ledger</h2>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-on-surface-variant">
             Track payment, fulfillment, wholesale complexity, and daily activity from a single operations table.
           </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Total Orders</p><p className="mt-2 text-2xl font-headline text-primary">{summary.totalOrders}</p></div>
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Pending</p><p className="mt-2 text-2xl font-headline text-[#c89b00]">{summary.pending}</p></div>
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">In Production</p><p className="mt-2 text-2xl font-headline text-sky-700">{summary.processing}</p></div>
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Shipped</p><p className="mt-2 text-2xl font-headline text-violet-700">{summary.shipped}</p></div>
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Completed Revenue</p><p className="mt-2 text-2xl font-headline text-emerald-700">{formatCurrency(summary.completedRevenue)}</p></div>
+          <div className="mt-6 grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-3 md:p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Total Orders</p><p className="mt-2 text-2xl font-headline text-primary">{summary.totalOrders}</p></div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-3 md:p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Pending</p><p className="mt-2 text-2xl font-headline text-[#c89b00]">{summary.pending}</p></div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-3 md:p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">In Production</p><p className="mt-2 text-2xl font-headline text-sky-700">{summary.processing}</p></div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-3 md:p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Shipped</p><p className="mt-2 text-2xl font-headline text-violet-700">{summary.shipped}</p></div>
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-3 md:p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.35)]"><p className="text-[10px] uppercase tracking-[0.24em] text-on-surface-variant">Completed Revenue</p><p className="mt-2 text-2xl font-headline text-emerald-700">{formatCurrency(summary.completedRevenue)}</p></div>
           </div>
         </div>
 
@@ -515,17 +515,17 @@ export default function AdminOrders() {
 
       {selectedOrder ? (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/35 backdrop-blur-[2px]" onClick={() => setSelectedOrderId(null)}>
-          <div className="h-full w-full max-w-2xl overflow-y-auto border-l border-outline-variant/20 bg-surface-container-lowest p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="h-full w-full max-w-full md:max-w-2xl overflow-y-auto border-l border-outline-variant/20 bg-surface-container-lowest p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 z-10 -mx-6 -mt-6 flex items-start justify-between gap-4 border-b border-outline-variant/20 bg-surface-container-lowest/95 px-6 py-5 backdrop-blur">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.24em] text-primary/70">Order Detail Drawer</p>
-                <h3 className="mt-2 text-3xl text-primary">#{selectedOrder.id.slice(-8).toUpperCase()}</h3>
+                <h3 className="mt-2 text-xl md:text-3xl text-primary">#{selectedOrder.id.slice(-8).toUpperCase()}</h3>
                 <p className="mt-2 text-sm text-on-surface-variant">{selectedOrder.user.name} · {selectedOrder.user.email}</p>
               </div>
               <button onClick={() => setSelectedOrderId(null)} className={getSecondaryActionClass()}>Close</button>
             </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
               <div className="rounded-2xl border border-outline-variant/12 bg-surface p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.25)]"><p className="text-[10px] uppercase tracking-[0.22em] text-on-surface-variant">Customer Details</p><p className="mt-3 font-semibold text-on-surface">{selectedOrder.shippingName}</p><p className="mt-1 text-sm text-on-surface-variant">{selectedOrder.user.email}</p><p className="mt-1 text-sm text-on-surface-variant">{selectedOrder.shippingPhone ?? 'Phone not provided'}</p>{selectedOrder.businessName ? <p className="mt-2 text-sm text-on-surface">Business: {selectedOrder.businessName}</p> : null}</div>
               <div className="rounded-2xl border border-outline-variant/12 bg-surface p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.25)]"><p className="text-[10px] uppercase tracking-[0.22em] text-on-surface-variant">Shipping Address</p><p className="mt-3 text-sm leading-6 text-on-surface">{selectedOrder.shippingAddress}</p><p className="mt-1 text-sm text-on-surface">{selectedOrder.shippingCity}, {selectedOrder.shippingState} {selectedOrder.shippingZip}</p></div>
               <div className="rounded-2xl border border-outline-variant/12 bg-surface p-4 shadow-[0_10px_30px_-24px_rgba(26,28,26,0.25)]"><p className="text-[10px] uppercase tracking-[0.22em] text-on-surface-variant">Payment Method</p><p className="mt-3 text-sm text-on-surface">{selectedOrder.paymentMethod}</p><p className="mt-1 text-sm text-on-surface-variant">Payment Status: {selectedOrder.paymentStatus}</p></div>

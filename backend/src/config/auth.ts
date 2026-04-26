@@ -24,4 +24,7 @@ export const auth = betterAuth({
       },
     },
   },
+  advanced: {
+    crossAndMixedSite: true,
+  },
 });

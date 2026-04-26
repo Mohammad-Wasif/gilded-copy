@@ -5,7 +5,7 @@ export default function AdminSettings() {
     <>
 <div className="space-y-8">
 <div>
-<h1 className="text-3xl md:text-4xl font-headline text-primary mb-2">Store Configuration</h1>
+<h1 className="text-2xl md:text-4xl font-headline text-primary mb-2">Store Configuration</h1>
 <p className="text-on-surface-variant font-body">Manage Hindustan Embroidery brand details, shipping protocols, and digital storefront settings.</p>
 </div>
 <div className="space-y-12">
@@ -153,17 +153,17 @@ Mumbai, Maharashtra 400001</textarea>
 <h2 className="text-2xl font-headline text-primary">Social Channels</h2>
 </div>
 <div className="space-y-5">
-<div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
-<span className="text-on-surface-variant font-medium text-sm w-24">Instagram</span>
-<input className="flex-1 bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="text" value="@hindustanembroidery" />
+<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
+<span className="text-on-surface-variant font-medium text-sm w-full sm:w-24">Instagram</span>
+<input className="flex-1 w-full sm:w-auto bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="text" value="@hindustanembroidery" />
 </div>
-<div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
-<span className="text-on-surface-variant font-medium text-sm w-24">Pinterest</span>
-<input className="flex-1 bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="text" value="pinterest.com/hindustanembroidery" />
+<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
+<span className="text-on-surface-variant font-medium text-sm w-full sm:w-24">Pinterest</span>
+<input className="flex-1 w-full sm:w-auto bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="text" value="pinterest.com/hindustanembroidery" />
 </div>
-<div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
-<span className="text-on-surface-variant font-medium text-sm w-24">WhatsApp</span>
-<input className="flex-1 bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="tel" value="+91 98765 43210" />
+<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10">
+<span className="text-on-surface-variant font-medium text-sm w-full sm:w-24">WhatsApp</span>
+<input className="flex-1 w-full sm:w-auto bg-transparent border-none focus:ring-0 px-2 py-1 font-body text-sm text-on-surface placeholder:text-on-surface-variant/40" type="tel" value="+91 98765 43210" />
 </div>
 </div>
 </section>

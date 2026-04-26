@@ -168,12 +168,12 @@ export default function FaqTab() {
     <div className="space-y-6">
       {/* Header */}
       <div className="rounded-2xl border border-outline-variant/30 bg-surface p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-1">
           <div className="flex items-center gap-2">
             <HelpCircle size={20} className="text-primary" />
             <h2 className="font-headline text-xl">FAQ Management</h2>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {saved && <span className="text-sm text-primary font-medium animate-pulse">✓ Saved</span>}
             <button onClick={resetToDefaults} className="text-xs font-medium text-on-surface-variant hover:text-error transition-colors flex items-center gap-1">
               <AlertTriangle size={12} /> Reset to Defaults
@@ -194,7 +194,7 @@ export default function FaqTab() {
           {/* Group Header */}
           <button
             onClick={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
-            className="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors"
+            className="w-full flex text-left items-center justify-between p-5 hover:bg-surface-container-low transition-colors gap-4"
           >
             <div className="flex items-center gap-3">
               <h3 className="font-headline text-lg text-on-surface">{group.title}</h3>

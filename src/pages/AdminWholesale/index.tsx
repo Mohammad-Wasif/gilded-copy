@@ -7,10 +7,10 @@ export default function AdminWholesale() {
 {/* Page Header */}
 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
 <div>
-<h2 className="font-headline text-4xl text-primary font-medium tracking-tight mb-2">Wholesale Inquiries</h2>
+<h2 className="font-headline text-2xl md:text-4xl text-primary font-medium tracking-tight mb-2">Wholesale Inquiries</h2>
 <p className="font-body text-on-surface-variant text-base">Review B2B requests for Hindustan Embroidery materials, custom studio production, and boutique supply partnerships.</p>
 </div>
-<div className="flex space-x-4">
+<div className="flex flex-col sm:flex-row gap-4">
 <button className="px-6 py-2 bg-surface-container-lowest text-primary font-body text-sm font-medium rounded-md ambient-shadow hover:bg-surface-container-low transition-colors ghost-border flex items-center">
 <span className="material-symbols-outlined mr-2 text-sm">filter_list</span>
                         Filter
@@ -52,7 +52,7 @@ export default function AdminWholesale() {
 </div>
 </div>
 </div>
-<div className="flex items-center space-x-4 relative z-10">
+<div className="flex flex-wrap items-center gap-4 relative z-10">
 <button className="px-6 py-3 bg-primary text-on-primary rounded-md font-body text-sm font-semibold transition-colors hover:bg-primary-container">
                             Approve Partner
                         </button>

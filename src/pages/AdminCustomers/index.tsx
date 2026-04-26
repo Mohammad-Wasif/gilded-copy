@@ -91,9 +91,9 @@ export default function AdminCustomers() {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-label font-medium text-on-surface-variant tracking-widest uppercase mb-2">Directory</p>
-          <h2 className="text-4xl font-headline text-primary">Clientele & Artisans</h2>
+          <h2 className="text-2xl md:text-4xl font-headline text-primary">Clientele & Artisans</h2>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button 
             onClick={exportCSV}
             className="flex items-center gap-2 px-6 py-2.5 bg-surface-container-lowest text-on-surface font-semibold border border-outline-variant/30 rounded-2xl hover:bg-surface-container-low transition"
@@ -175,7 +175,7 @@ export default function AdminCustomers() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && loadData()}
-              className="pl-10 pr-4 py-2.5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 text-sm focus:outline-none focus:border-primary w-64 transition-colors"
+              className="pl-10 pr-4 py-2.5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 text-sm focus:outline-none focus:border-primary w-full sm:w-64 transition-colors"
             />
           </div>
           <button className="p-2.5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant hover:text-primary transition">

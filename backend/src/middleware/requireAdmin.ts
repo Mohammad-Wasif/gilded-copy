@@ -19,9 +19,9 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
     }
 
     // Strict RBAC: only users with role="admin" in the database are allowed.
-    if (session.user.role !== "admin") {
+    if ((session.user as any).role !== "admin") {
       logger.warn(
-        { email: session.user.email, role: session.user.role },
+        { email: session.user.email, role: (session.user as any).role },
         "Admin access denied: Insufficient privileges"
       );
       return res.status(403).json({

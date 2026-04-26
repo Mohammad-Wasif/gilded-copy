@@ -24,30 +24,64 @@ const defaultFaqGroups: FaqGroup[] = [
     items: [
       { id: generateId(), question: 'Are all products available year-round?', answer: 'Our core materials such as zari, dabka, beads, sequins, and trims are generally available throughout the year. Limited heritage and deadstock collections are released in small batches and may not be restocked.' },
       { id: generateId(), question: 'How can I check if a product is in stock?', answer: 'Each product page displays its availability status: In Stock, Low Stock, Made to Order, or Sold Out.' },
-      { id: generateId(), question: 'Can I reserve items before placing a bulk order?', answer: 'Yes. We can temporarily reserve materials for confirmed projects while you finalize quantities.' },
+      { id: generateId(), question: 'Can I reserve items before placing a bulk order?', answer: 'Yes. We can temporarily reserve materials for confirmed projects while you finalize quantities. Reservation requests are reviewed based on availability.' },
+      { id: generateId(), question: 'Do you restock sold-out items?', answer: 'Some standard materials are restocked regularly, but limited or heritage collections may not return once sold out.' },
       { id: generateId(), question: 'Is there a minimum order quantity?', answer: 'Retail orders have no minimum. Wholesale or bulk orders may have minimum quantity requirements depending on the product type.' },
+      { id: generateId(), question: 'Can I request large quantities for production?', answer: 'Yes. For studio or production requirements, we recommend contacting us in advance to confirm availability and timelines.' },
+      { id: generateId(), question: 'Can I mix different products in one order?', answer: 'Yes. You can combine multiple products in a single retail order. Bulk orders may be processed separately.' },
+      { id: generateId(), question: 'How accurate are product colors and finishes shown online?', answer: 'We aim for high accuracy, but slight variations may occur due to lighting and screen differences. For critical projects, we recommend confirming before ordering.' },
     ]
   },
   {
     id: 'shipping', title: 'Shipping & Delivery',
     items: [
-      { id: generateId(), question: 'How long does dispatch take?', answer: 'Retail orders are typically dispatched within 2–4 business days.' },
+      { id: generateId(), question: 'How long does dispatch take?', answer: 'Retail orders are typically dispatched within 2–4 business days. Bulk or custom orders may take longer depending on preparation.' },
       { id: generateId(), question: 'Do you ship internationally?', answer: 'Yes. We ship worldwide to artisans, boutiques, costume houses, and production studios.' },
-      { id: generateId(), question: 'How long does delivery take?', answer: 'Domestic delivery usually takes 3–7 days. International shipping timelines vary based on destination.' },
+      { id: generateId(), question: 'How long does delivery take?', answer: 'Domestic delivery usually takes 3–7 days. International shipping timelines vary based on destination and customs processing.' },
+      { id: generateId(), question: 'Will I receive tracking details?', answer: 'Yes. Tracking information is shared via email or WhatsApp once your order is dispatched.' },
+      { id: generateId(), question: 'Are there any customs charges for international orders?', answer: 'Custom duties and taxes (if applicable) are the responsibility of the customer and vary by country.' },
+      { id: generateId(), question: 'Can I request urgent or priority shipping?', answer: 'Yes. If you need expedited shipping, contact us before placing the order to check availability.' },
+      { id: generateId(), question: 'What happens if my order is delayed?', answer: 'If your order is delayed, contact us with your order number and we will provide an update and support.' },
+      { id: generateId(), question: 'Do you ship fragile or high-value materials securely?', answer: 'Yes. All orders are carefully packed to protect delicate embroidery materials during transit.' },
     ]
   },
   {
-    id: 'returns', title: 'Returns & Exchanges',
+    id: 'wholesale', title: 'Wholesale & Bulk Orders',
     items: [
-      { id: generateId(), question: 'What is your return policy?', answer: 'We accept returns within 7 days if the product is unused and in original packaging.' },
-      { id: generateId(), question: 'Can I exchange materials?', answer: 'Exchanges are possible for standard items. Custom or cut-to-order products cannot be exchanged.' },
+      { id: generateId(), question: 'Do you offer wholesale pricing?', answer: 'Yes. We provide wholesale pricing for boutiques, studios, export houses, and production units.' },
+      { id: generateId(), question: 'How can I apply for wholesale access?', answer: 'Submit your business details through our contact or wholesale inquiry form. Our team will review and respond.' },
+      { id: generateId(), question: 'What information is required for wholesale approval?', answer: 'Business name, location, product requirements, estimated quantities, and type of business.' },
+      { id: generateId(), question: 'Can I place recurring bulk orders?', answer: 'Yes. We support ongoing supply for studios and production teams.' },
+      { id: generateId(), question: 'Do you provide custom sourcing for bulk projects?', answer: 'Yes. We can source specific materials based on finish, texture, size, or reference samples.' },
+      { id: generateId(), question: 'Can you match materials from a reference image?', answer: 'In many cases, yes. Share a clear image or sample, and we will suggest the closest match or source it.' },
+      { id: generateId(), question: 'What is the lead time for bulk or custom orders?', answer: 'Lead times vary depending on quantity and sourcing complexity. Most requests are reviewed within 3–5 working days.' },
+      { id: generateId(), question: 'Do you offer special pricing for large-volume orders?', answer: 'Yes. Pricing is adjusted based on quantity and product category.' },
     ]
   },
   {
-    id: 'wholesale', title: 'Wholesale & Bulk',
+    id: 'product', title: 'Product & Care',
     items: [
-      { id: generateId(), question: 'How do I apply for wholesale pricing?', answer: 'You can apply through our Contact page or reach out directly via WhatsApp for wholesale inquiries.' },
-      { id: generateId(), question: 'What discounts are available for bulk orders?', answer: 'Bulk pricing depends on quantity and product type. Contact us for a custom quote.' },
+      { id: generateId(), question: 'How should embroidery materials be stored?', answer: 'Store in a cool, dry place away from sunlight, humidity, and corrosive surfaces.' },
+      { id: generateId(), question: 'How do I prevent tarnishing of metallic materials?', answer: 'Use acid-free wrapping and keep materials sealed in protective packaging.' },
+      { id: generateId(), question: 'Are your materials suitable for bridal and couture work?', answer: 'Yes. Our materials are widely used in bridal, couture, costume, and high-end design applications.' },
+      { id: generateId(), question: 'Do you offer material recommendations for specific use cases?', answer: 'Yes. You can contact us for suggestions based on your project requirements.' },
+      { id: generateId(), question: 'Can I use these materials for machine embroidery?', answer: 'Some materials are suitable, but we recommend checking compatibility based on the technique.' },
+      { id: generateId(), question: 'Do you provide samples before bulk purchase?', answer: 'For large orders, sample requests can be reviewed based on availability.' },
+      { id: generateId(), question: 'Are product measurements and specifications accurate?', answer: 'Yes. We maintain high accuracy, but slight variations may occur in handmade or heritage materials.' },
+      { id: generateId(), question: 'How do I choose the right material for my project?', answer: 'You can explore product categories or contact us for guidance based on design, finish, and budget.' },
+    ]
+  },
+  {
+    id: 'support', title: 'Account & Support',
+    items: [
+      { id: generateId(), question: 'Do I need an account to place an order?', answer: 'No. You can checkout as a guest. Creating an account helps with tracking and managing orders.' },
+      { id: generateId(), question: 'What can I do with a customer account?', answer: 'View orders, save addresses, track shipments, and manage account details.' },
+      { id: generateId(), question: 'How do I reset my password?', answer: 'Use the "Forgot Password" option on the login page.' },
+      { id: generateId(), question: 'How can I contact support?', answer: 'You can reach us via contact form, WhatsApp, or email.' },
+      { id: generateId(), question: 'What details should I include when contacting support?', answer: 'Order number, issue description, and relevant images (if applicable).' },
+      { id: generateId(), question: 'How quickly will I receive a response?', answer: 'Most queries are responded to within 24–48 hours.' },
+      { id: generateId(), question: 'Can I modify or cancel an order after placing it?', answer: 'Changes may be possible before dispatch. Contact us immediately after placing the order.' },
+      { id: generateId(), question: 'What should I do if I receive a damaged or incorrect product?', answer: 'Contact us within 48 hours with photos and order details. We will assist with resolution.' },
     ]
   },
 ];

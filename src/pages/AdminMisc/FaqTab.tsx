@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Plus, Trash2, ChevronDown, ChevronUp, Edit2, Save, X, HelpCircle, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Trash2, ChevronDown, ChevronUp, Edit2, Save, X, HelpCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { api } from '../../lib/api';
 
 interface FaqItem {
   id: string;
@@ -86,22 +87,29 @@ const defaultFaqGroups: FaqGroup[] = [
   },
 ];
 
-const STORAGE_KEY = 'admin_faq_data';
-
-function loadFaqData(): FaqGroup[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return defaultFaqGroups;
-}
-
-function saveFaqData(groups: FaqGroup[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(groups));
-}
-
 export default function FaqTab() {
-  const [groups, setGroups] = useState<FaqGroup[]>(loadFaqData);
+  const [groups, setGroups] = useState<FaqGroup[]>(defaultFaqGroups);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchFaq = async () => {
+      try {
+        const res = await api.settings.get('faq_data');
+        if (mounted && res?.value) {
+          const parsed = typeof res.value === 'string' ? JSON.parse(res.value) : res.value;
+          setGroups(parsed);
+        }
+      } catch (err) {
+        console.error('Failed to load FAQ from backend, using defaults', err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+    fetchFaq();
+    return () => { mounted = false; };
+  }, []);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [editQuestion, setEditQuestion] = useState('');
@@ -118,30 +126,49 @@ export default function FaqTab() {
 
   const [saved, setSaved] = useState(false);
 
-  const persist = (updated: FaqGroup[]) => {
+  const updateState = (updated: FaqGroup[]) => {
     setGroups(updated);
-    saveFaqData(updated);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
   };
+
+  const handleSaveAll = async () => {
+    try {
+      setIsSaving(true);
+      await api.admin.settings.update('faq_data', groups);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error('Failed to save FAQ to backend', err);
+      alert('Failed to save changes. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
 
   // Group operations
   const addGroup = () => {
     if (!newGroupTitle.trim()) return;
     const id = newGroupTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    persist([...groups, { id, title: newGroupTitle.trim(), items: [] }]);
+    updateState([...groups, { id, title: newGroupTitle.trim(), items: [] }]);
     setNewGroupTitle(''); setShowNewGroup(false);
   };
 
   const deleteGroup = (groupId: string) => {
     if (!window.confirm('Delete this entire FAQ group and all its questions?')) return;
-    persist(groups.filter(g => g.id !== groupId));
+    updateState(groups.filter(g => g.id !== groupId));
   };
 
   // Item operations
   const addItem = (groupId: string) => {
     if (!newQuestion.trim() || !newAnswer.trim()) return;
-    persist(groups.map(g => g.id === groupId ? { ...g, items: [...g.items, { id: generateId(), question: newQuestion.trim(), answer: newAnswer.trim() }] } : g));
+    updateState(groups.map(g => g.id === groupId ? { ...g, items: [...g.items, { id: generateId(), question: newQuestion.trim(), answer: newAnswer.trim() }] } : g));
     setNewQuestion(''); setNewAnswer(''); setAddingToGroup(null);
   };
 
@@ -151,17 +178,17 @@ export default function FaqTab() {
 
   const saveEditing = (groupId: string) => {
     if (!editQuestion.trim() || !editAnswer.trim()) return;
-    persist(groups.map(g => g.id === groupId ? { ...g, items: g.items.map(i => i.id === editingItem ? { ...i, question: editQuestion.trim(), answer: editAnswer.trim() } : i) } : g));
+    updateState(groups.map(g => g.id === groupId ? { ...g, items: g.items.map(i => i.id === editingItem ? { ...i, question: editQuestion.trim(), answer: editAnswer.trim() } : i) } : g));
     setEditingItem(null);
   };
 
   const deleteItem = (groupId: string, itemId: string) => {
-    persist(groups.map(g => g.id === groupId ? { ...g, items: g.items.filter(i => i.id !== itemId) } : g));
+    updateState(groups.map(g => g.id === groupId ? { ...g, items: g.items.filter(i => i.id !== itemId) } : g));
   };
 
   const resetToDefaults = () => {
     if (!window.confirm('Reset all FAQ data to defaults? This will overwrite your changes.')) return;
-    persist(defaultFaqGroups);
+    updateState(defaultFaqGroups);
   };
 
   return (
@@ -178,13 +205,14 @@ export default function FaqTab() {
             <button onClick={resetToDefaults} className="text-xs font-medium text-on-surface-variant hover:text-error transition-colors flex items-center gap-1">
               <AlertTriangle size={12} /> Reset to Defaults
             </button>
+            <button onClick={handleSaveAll} disabled={isSaving} className="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50">
+              {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
         </div>
         <p className="text-sm text-on-surface-variant">
-          Manage the FAQ sections displayed on the Help & FAQ page. Changes are saved automatically to local storage.
-        </p>
-        <p className="mt-2 text-xs text-on-surface-variant/70 italic">
-          Note: To make FAQ data dynamic from the database, a backend API can be added later. Currently stored in browser localStorage.
+          Manage the FAQ sections displayed on the Help & FAQ page. Changes are saved dynamically to the database.
         </p>
       </div>
 

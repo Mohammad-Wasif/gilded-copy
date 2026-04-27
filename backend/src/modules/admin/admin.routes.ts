@@ -43,6 +43,9 @@ import {
   handleLogCommunication,
   handleBulkAction
 } from "./admin-customers.controller";
+import { AdminSettingsController } from "./admin-settings.controller";
+
+const adminSettingsController = new AdminSettingsController();
 
 export const adminRouter = Router();
 
@@ -95,3 +98,7 @@ adminRouter.delete("/misc/applications/:id", handleDeleteShopApplication);
 adminRouter.get("/misc/applications/:id/products", handleGetShopApplicationProducts);
 adminRouter.put("/misc/applications/:id/products", handleUpdateShopApplicationProducts);
 adminRouter.get("/misc/products/search", handleSearchProductsForApplication);
+
+// ─── Global Settings ──────────────────────────────────────────────────
+adminRouter.get("/settings/:key", adminSettingsController.getSetting);
+adminRouter.put("/settings/:key", adminSettingsController.updateSetting);

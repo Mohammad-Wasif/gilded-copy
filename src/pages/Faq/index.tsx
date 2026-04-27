@@ -1,8 +1,21 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, Search, ArrowRight, Headphones, MessageCircle, Mail } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { api } from '../../lib/api';
 
-const faqGroups = [
+interface FaqItem {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+interface FaqGroup {
+  id: string;
+  title: string;
+  items: FaqItem[];
+}
+
+const defaultFaqGroups: FaqGroup[] = [
   {
     id: 'orders',
     title: 'Orders & Availability',
@@ -196,6 +209,24 @@ const faqGroups = [
 ];
 
 export default function FaqPage() {
+  const [faqGroups, setFaqGroups] = useState<FaqGroup[]>(defaultFaqGroups);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadData = async () => {
+      try {
+        const res = await api.settings.get('faq_data');
+        if (mounted && res?.value) {
+          setFaqGroups(typeof res.value === 'string' ? JSON.parse(res.value) : res.value);
+        }
+      } catch (err) {
+        console.error('Failed to load FAQ from backend, using defaults', err);
+      }
+    };
+    loadData();
+    return () => { mounted = false; };
+  }, []);
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSection, setActiveSection] = useState('orders');
   const location = useLocation();

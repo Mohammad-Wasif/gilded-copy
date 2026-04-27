@@ -368,3 +368,13 @@ model OrderItem {
   @@index([productId])
   @@map("order_items")
 }
+
+// ─── Settings Model ──────────────────────────────────────────────────
+
+model Setting {
+  key       String   @id @db.VarChar(64)
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}

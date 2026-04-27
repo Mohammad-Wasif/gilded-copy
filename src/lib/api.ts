@@ -134,6 +134,9 @@ export const api = {
       return response.json();
     },
   },
+  settings: {
+    get: (key: string) => fetchApi<any>(`/settings/${key}`),
+  },
   admin: {
     getDashboardStats: () =>
       fetchApi<SingleResponse<DashboardStats>>('/admin/dashboard-stats'),
@@ -256,6 +259,9 @@ export const api = {
       getApplicationProducts: (id: string) => fetchApi<SingleResponse<any>>(`/admin/misc/applications/${id}/products`),
       updateApplicationProducts: (id: string, productIds: string[]) => fetchApi<SingleResponse<any>>(`/admin/misc/applications/${id}/products`, { method: 'PUT', body: JSON.stringify({ productIds }) }),
       searchProductsForApp: (q: string) => fetchApi<SingleResponse<any[]>>(`/admin/misc/products/search?q=${encodeURIComponent(q)}`)
+    },
+    settings: {
+      update: (key: string, value: any) => fetchApi<any>(`/admin/settings/${key}`, { method: 'PUT', body: JSON.stringify({ value }) })
     }
   }
 };

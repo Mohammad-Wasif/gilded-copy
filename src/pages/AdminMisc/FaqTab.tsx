@@ -138,7 +138,7 @@ export default function FaqTab() {
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error('Failed to save FAQ to backend', err);
-      alert('Failed to save changes. Please try again.');
+      alert(`Failed to save changes: ${err instanceof Error ? err.message : 'Unknown error'}. Please try again.`);
     } finally {
       setIsSaving(false);
     }
@@ -220,21 +220,28 @@ export default function FaqTab() {
       {groups.map(group => (
         <div key={group.id} className="rounded-2xl border border-outline-variant/30 bg-surface shadow-sm overflow-hidden">
           {/* Group Header */}
-          <button
+          <div
+            className="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors gap-4 cursor-pointer"
             onClick={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)}
-            className="w-full flex text-left items-center justify-between p-5 hover:bg-surface-container-low transition-colors gap-4"
           >
             <div className="flex items-center gap-3">
               <h3 className="font-headline text-lg text-on-surface">{group.title}</h3>
               <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{group.items.length} questions</span>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={(e) => { e.stopPropagation(); deleteGroup(group.id); }} className="p-1.5 rounded text-on-surface-variant/40 hover:text-error hover:bg-error/10 transition-colors">
+              <button 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  deleteGroup(group.id); 
+                }} 
+                className="p-1.5 rounded text-on-surface-variant/40 hover:text-error hover:bg-error/10 transition-colors"
+                title="Delete Group"
+              >
                 <Trash2 size={14} />
               </button>
               {expandedGroup === group.id ? <ChevronUp size={18} className="text-on-surface-variant" /> : <ChevronDown size={18} className="text-on-surface-variant" />}
             </div>
-          </button>
+          </div>
 
           {/* Expanded Content */}
           {expandedGroup === group.id && (

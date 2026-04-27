@@ -12,7 +12,7 @@ const pool = new Pool({
   connectionString: env.DATABASE_URL,
   max: 20,                      // Maximum clients in pool 
   idleTimeoutMillis: 30_000,    // Close idle connections after 30s
-  connectionTimeoutMillis: 5_000 // Fail if no connection acquired within 5s
+  connectionTimeoutMillis: 15_000 // Fail if no connection acquired within 15s
 });
 
 const adapter = new PrismaPg(pool);

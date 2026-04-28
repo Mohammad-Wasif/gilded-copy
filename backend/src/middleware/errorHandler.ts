@@ -26,7 +26,7 @@ export function errorHandler(
   res.status(statusCode).json({
     success: false,
     error: {
-      message: isServerError ? "Internal server error" : err.message,
+      message: (isServerError && process.env.NODE_ENV === "production") ? "Internal server error" : err.message,
       statusCode
     },
     timestamp: new Date().toISOString()

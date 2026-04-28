@@ -36,7 +36,7 @@ export interface AdminProductInput {
   categoryId: string;
   applicationIds?: string[];
   images?: Array<{
-    imageUrl: string;
+    imageUrl?: string | null;
     altText?: string | null;
     isPrimary?: boolean;
     sortOrder?: number;
@@ -401,6 +401,8 @@ export async function getStockOverview() {
 
 // ─── Create Product ───────────────────────────────────────────────────
 
+// ─── Create Product ───────────────────────────────────────────────────
+
 export async function createAdminProduct(
   input: AdminProductInput,
   adminId?: string | null,
@@ -412,62 +414,83 @@ export async function createAdminProduct(
   const existingSku = await db.product.findUnique({ where: { sku: input.sku } });
   if (existingSku) throw createHttpError("A product with this SKU already exists", 409);
 
-  const product = await db.product.create({
-    data: {
-      name: input.name.trim(),
-      slug: input.slug.trim(),
-      shortDescription: normalizeOptional(input.shortDescription),
-      description: normalizeOptional(input.description),
-      status: input.status,
-      basePrice: input.basePrice,
-      compareAtPrice: input.compareAtPrice ?? null,
-      discountPrice: input.discountPrice ?? null,
-      purchasePrice: input.purchasePrice ?? null,
-      sku: input.sku.trim(),
-      stockQuantity: input.stockQuantity,
-      lowStockThreshold: input.lowStockThreshold ?? 5,
-      isFeatured: input.isFeatured ?? false,
-      sortOrder: input.sortOrder ?? 0,
-      tags: input.tags ?? [],
-      supplier: normalizeOptional(input.supplier),
-      categoryId: input.categoryId,
-      applications: input.applicationIds?.length
-        ? { connect: input.applicationIds.map((id) => ({ id })) }
-        : undefined,
-      images: input.images?.length
-        ? {
-            create: input.images.map((img, idx) => ({
-              imageUrl: img.imageUrl,
-              altText: normalizeOptional(img.altText),
-              isPrimary: img.isPrimary ?? idx === 0,
-              sortOrder: img.sortOrder ?? idx,
-            })),
-          }
-        : undefined,
-      variants: input.variants?.length
-        ? {
-            create: input.variants.map((v, idx) => ({
-              title: v.title.trim(),
-              sku: v.sku.trim(),
-              size: normalizeOptional(v.size),
-              color: normalizeOptional(v.color),
-              material: normalizeOptional(v.material),
-              finish: normalizeOptional(v.finish),
-              imageUrl: normalizeOptional(v.imageUrl),
-              status: v.status ?? ProductVariantStatus.ACTIVE,
-              priceOverride: v.priceOverride ?? null,
-              stockQuantity: v.stockQuantity ?? 0,
-              sortOrder: v.sortOrder ?? idx,
-            })),
-          }
-        : undefined,
-    },
-    select: adminProductSelect,
-  });
+  // Check for duplicate SKUs in input variants
+  if (input.variants?.length) {
+    const skus = input.variants.map(v => v.sku.trim());
+    const seen = new Set<string>();
+    const duplicates: string[] = [];
+    for (const s of skus) {
+      if (seen.has(s)) duplicates.push(s);
+      seen.add(s);
+    }
+    if (duplicates.length > 0) {
+      throw createHttpError(`Duplicate variant SKUs in request: ${duplicates.join(", ")}`, 400);
+    }
+  }
 
-  await writeLog(product.id, "created", { name: product.name, sku: product.sku }, adminId, adminName);
+  try {
+    const product = await db.product.create({
+      data: {
+        name: input.name.trim(),
+        slug: input.slug.trim(),
+        shortDescription: normalizeOptional(input.shortDescription),
+        description: normalizeOptional(input.description),
+        status: input.status,
+        basePrice: input.basePrice,
+        compareAtPrice: input.compareAtPrice ?? null,
+        discountPrice: input.discountPrice ?? null,
+        purchasePrice: input.purchasePrice ?? null,
+        sku: input.sku.trim(),
+        stockQuantity: input.stockQuantity,
+        lowStockThreshold: input.lowStockThreshold ?? 5,
+        isFeatured: input.isFeatured ?? false,
+        sortOrder: input.sortOrder ?? 0,
+        tags: input.tags ?? [],
+        supplier: normalizeOptional(input.supplier),
+        categoryId: input.categoryId,
+        applications: input.applicationIds?.length
+          ? { connect: input.applicationIds.map((id) => ({ id })) }
+          : undefined,
+        images: input.images?.length
+          ? {
+              create: input.images.map((img, idx) => ({
+                imageUrl: img.imageUrl,
+                altText: normalizeOptional(img.altText),
+                isPrimary: img.isPrimary ?? idx === 0,
+                sortOrder: img.sortOrder ?? idx,
+              })),
+            }
+          : undefined,
+        variants: input.variants?.length
+          ? {
+              create: input.variants.map((v, idx) => ({
+                title: v.title.trim(),
+                sku: v.sku.trim(),
+                size: normalizeOptional(v.size),
+                color: normalizeOptional(v.color),
+                material: normalizeOptional(v.material),
+                finish: normalizeOptional(v.finish),
+                imageUrl: normalizeOptional(v.imageUrl),
+                status: v.status ?? ProductVariantStatus.ACTIVE,
+                priceOverride: v.priceOverride ?? null,
+                stockQuantity: v.stockQuantity ?? 0,
+                sortOrder: v.sortOrder ?? idx,
+              })),
+            }
+          : undefined,
+      },
+      select: adminProductSelect,
+    });
 
-  return serializeProduct(product);
+    await writeLog(product.id, "created", { name: product.name, sku: product.sku }, adminId, adminName);
+    return serializeProduct(product);
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      const field = (err.meta?.target as string[])?.join(", ") || "SKU";
+      throw createHttpError(`A product or variant with this ${field} already exists.`, 409);
+    }
+    throw err;
+  }
 }
 
 // ─── Update Product ───────────────────────────────────────────────────
@@ -487,12 +510,24 @@ export async function updateAdminProduct(
       basePrice: true,
       categoryId: true,
       stockQuantity: true,
-      images: { select: { id: true } },
-      variants: { select: { id: true } },
     },
   });
 
   if (!existing) throw createHttpError("Product not found", 404);
+
+  // Check for duplicate SKUs in input variants
+  if (input.variants?.length) {
+    const skus = input.variants.map(v => v.sku.trim());
+    const seen = new Set<string>();
+    const duplicates: string[] = [];
+    for (const s of skus) {
+      if (seen.has(s)) duplicates.push(s);
+      seen.add(s);
+    }
+    if (duplicates.length > 0) {
+      throw createHttpError(`Duplicate variant SKUs in request: ${duplicates.join(", ")}`, 400);
+    }
+  }
 
   // Track changes for log
   const changes: Record<string, { from: unknown; to: unknown }> = {};
@@ -503,71 +538,79 @@ export async function updateAdminProduct(
   if (existing.stockQuantity !== input.stockQuantity)
     changes.stockQuantity = { from: existing.stockQuantity, to: input.stockQuantity };
 
-  // Delete existing images & variants and recreate (simple replace strategy)
-  await db.$transaction([
-    db.productImage.deleteMany({ where: { productId: id } }),
-    db.productVariant.deleteMany({ where: { productId: id } }),
-  ]);
+  try {
+    const updated = await db.$transaction(async (tx) => {
+      // Delete existing images & variants (replace strategy)
+      await tx.productImage.deleteMany({ where: { productId: id } });
+      await tx.productVariant.deleteMany({ where: { productId: id } });
 
-  const updated = await db.product.update({
-    where: { id },
-    data: {
-      name: input.name.trim(),
-      slug: input.slug.trim(),
-      shortDescription: normalizeOptional(input.shortDescription),
-      description: normalizeOptional(input.description),
-      status: input.status,
-      basePrice: input.basePrice,
-      compareAtPrice: input.compareAtPrice ?? null,
-      discountPrice: input.discountPrice ?? null,
-      purchasePrice: input.purchasePrice ?? null,
-      sku: input.sku.trim(),
-      stockQuantity: input.stockQuantity,
-      lowStockThreshold: input.lowStockThreshold ?? 5,
-      isFeatured: input.isFeatured ?? false,
-      sortOrder: input.sortOrder ?? 0,
-      tags: input.tags ?? [],
-      supplier: normalizeOptional(input.supplier),
-      categoryId: input.categoryId,
-      applications: { set: input.applicationIds?.map((id) => ({ id })) ?? [] },
-      images: input.images?.length
-        ? {
-            create: input.images.map((img, idx) => ({
-              imageUrl: img.imageUrl,
-              altText: normalizeOptional(img.altText),
-              isPrimary: img.isPrimary ?? idx === 0,
-              sortOrder: img.sortOrder ?? idx,
-            })),
-          }
-        : undefined,
-      variants: input.variants?.length
-        ? {
-            create: input.variants.map((v, idx) => ({
-              title: v.title.trim(),
-              sku: v.sku.trim(),
-              size: normalizeOptional(v.size),
-              color: normalizeOptional(v.color),
-              material: normalizeOptional(v.material),
-              finish: normalizeOptional(v.finish),
-              imageUrl: normalizeOptional(v.imageUrl),
-              status: v.status ?? ProductVariantStatus.ACTIVE,
-              priceOverride: v.priceOverride ?? null,
-              stockQuantity: v.stockQuantity ?? 0,
-              sortOrder: v.sortOrder ?? idx,
-            })),
-          }
-        : undefined,
-    },
-    select: adminProductSelect,
-  });
+      return await tx.product.update({
+        where: { id },
+        data: {
+          name: input.name.trim(),
+          slug: input.slug.trim(),
+          shortDescription: normalizeOptional(input.shortDescription),
+          description: normalizeOptional(input.description),
+          status: input.status,
+          basePrice: input.basePrice,
+          compareAtPrice: input.compareAtPrice ?? null,
+          discountPrice: input.discountPrice ?? null,
+          purchasePrice: input.purchasePrice ?? null,
+          sku: input.sku.trim(),
+          stockQuantity: input.stockQuantity,
+          lowStockThreshold: input.lowStockThreshold ?? 5,
+          isFeatured: input.isFeatured ?? false,
+          sortOrder: input.sortOrder ?? 0,
+          tags: input.tags ?? [],
+          supplier: normalizeOptional(input.supplier),
+          categoryId: input.categoryId,
+          applications: { set: input.applicationIds?.map((appId) => ({ id: appId })) ?? [] },
+          images: input.images?.length
+            ? {
+                create: input.images.map((img, idx) => ({
+                  imageUrl: img.imageUrl,
+                  altText: normalizeOptional(img.altText),
+                  isPrimary: img.isPrimary ?? idx === 0,
+                  sortOrder: img.sortOrder ?? idx,
+                })),
+              }
+            : undefined,
+          variants: input.variants?.length
+            ? {
+                create: input.variants.map((v, idx) => ({
+                  title: v.title.trim(),
+                  sku: v.sku.trim(),
+                  size: normalizeOptional(v.size),
+                  color: normalizeOptional(v.color),
+                  material: normalizeOptional(v.material),
+                  finish: normalizeOptional(v.finish),
+                  imageUrl: normalizeOptional(v.imageUrl),
+                  status: v.status ?? ProductVariantStatus.ACTIVE,
+                  priceOverride: v.priceOverride ?? null,
+                  stockQuantity: v.stockQuantity ?? 0,
+                  sortOrder: v.sortOrder ?? idx,
+                })),
+              }
+            : undefined,
+        },
+        select: adminProductSelect,
+      });
+    });
 
-  if (Object.keys(changes).length > 0) {
-    await writeLog(id, "edited", changes, adminId, adminName);
-  } else {
-    await writeLog(id, "edited", { name: input.name }, adminId, adminName);
+    if (Object.keys(changes).length > 0) {
+      await writeLog(id, "edited", changes, adminId, adminName);
+    } else {
+      await writeLog(id, "edited", { name: input.name }, adminId, adminName);
+    }
+
+    return serializeProduct(updated);
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      const field = (err.meta?.target as string[])?.join(", ") || "SKU";
+      throw createHttpError(`A product or variant with this ${field} already exists.`, 409);
+    }
+    throw err;
   }
-
-  return serializeProduct(updated);
 }
 
 // ─── Quick Stock Adjust ───────────────────────────────────────────────

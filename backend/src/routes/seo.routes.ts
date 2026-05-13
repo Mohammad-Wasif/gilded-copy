@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../lib/prisma";
+import { db } from "../config/db";
 import { env } from "../config/env";
 import { logger } from "../lib/logger";
 
@@ -10,11 +10,11 @@ seoRouter.get("/sitemap.xml", async (req, res) => {
     const baseUrl = env.CORS_ORIGIN || "https://gildedheirloom.com";
 
     const [categories, products] = await Promise.all([
-      prisma.category.findMany({
+      db.category.findMany({
         where: { status: "ACTIVE" },
         select: { slug: true, updatedAt: true }
       }),
-      prisma.product.findMany({
+      db.product.findMany({
         where: { status: "ACTIVE" },
         select: { slug: true, updatedAt: true, category: { select: { slug: true } } }
       })

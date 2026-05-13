@@ -13,6 +13,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@honeybadger-io/js": "^6.14.0",
+    "@honeybadger-io/react": "^6.1.27",
     "@types/papaparse": "^5.5.2",
     "better-auth": "^1.6.3",
     "date-fns": "^4.1.0",

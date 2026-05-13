@@ -6,6 +6,7 @@ import { cartRouter } from "../modules/cart/cart.routes";
 import orderRouter from "../modules/orders/orders.routes";
 import { uploadRouter } from "../modules/upload/upload.routes";
 import { adminRouter } from "../modules/admin/admin.routes";
+import { seoRouter } from "./seo.routes";
 import { env } from "../config/env";
 import { AdminSettingsController } from "../modules/admin/admin-settings.controller";
 
@@ -14,6 +15,7 @@ const settingsController = new AdminSettingsController();
 export const apiRouter = Router();
 
 apiRouter.use("/health", healthRouter);
+apiRouter.use("/", seoRouter);
 apiRouter.use("/catalog", catalogRouter);
 apiRouter.use("/cart", cartRouter);
 apiRouter.use("/orders", orderRouter);

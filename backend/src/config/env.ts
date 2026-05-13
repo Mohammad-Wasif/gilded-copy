@@ -16,6 +16,7 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().min(1),
   CLOUDINARY_API_SECRET: z.string().min(1),
   ADMIN_EMAIL: z.string().email().default("admin@hindustanembroidery.com"),
+  HONEYBADGER_API_KEY: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

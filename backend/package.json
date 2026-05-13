@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.6.3",
+    "@honeybadger-io/js": "^6.14.0",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "@types/cookie-parser": "^1.4.10",

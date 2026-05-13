@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import pinoHttp from "pino-http";
+import Honeybadger from "@honeybadger-io/js";
 import { toNodeHandler } from "better-auth/node";
 import { env } from "./config/env";
 import { auth } from "./config/auth";
@@ -9,6 +10,11 @@ import { logger } from "./lib/logger";
 import { errorHandler } from "./middleware/errorHandler";
 import { notFound } from "./middleware/notFound";
 import { apiRouter } from "./routes";
+
+Honeybadger.configure({
+  apiKey: env.HONEYBADGER_API_KEY || "",
+  environment: env.NODE_ENV,
+});
 
 export const app = express();
 
@@ -26,6 +32,9 @@ app.use(
   })
 );
 
+// Honeybadger request handler should be the first middleware to track requests
+app.use(Honeybadger.requestHandler);
+
 // Better Auth handler — MUST be mounted BEFORE express.json()
 // because Better Auth reads the raw request body itself.
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -36,4 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", apiRouter);
 app.use(notFound);
+
+// Honeybadger error handler should be placed after your routes but before any other error handler
+app.use(Honeybadger.errorHandler);
 app.use(errorHandler);

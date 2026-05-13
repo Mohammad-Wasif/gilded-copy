@@ -15,3 +15,15 @@ export const logger = pino({
       }
     : undefined
 });
+
+// Dedicated audit logger for sensitive events like payments, logins, and status changes
+export const auditLogger = logger.child({ type: "audit" });
+
+export function logAudit(action: string, actor: { id: string; role?: string }, details: Record<string, any>) {
+  auditLogger.info({
+    action,
+    actor,
+    details,
+    timestamp: new Date().toISOString()
+  }, `Audit Event: ${action}`);
+}
